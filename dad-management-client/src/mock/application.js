@@ -36,9 +36,9 @@ let applicationData = Mock.mock({
                 web_type () {
                     return Mock.mock({
                         'data|1': [
-                            'web_type_0',
-                            'web_type_1',
-                            'web_type_2',
+                            'forum',
+                            'news',
+                            'exchange',
                         ],
                     }).data
                 },
@@ -49,18 +49,36 @@ let applicationData = Mock.mock({
                 app_type () {
                     return Mock.mock({
                         'data|1': [
-                            'app_type_0',
-                            'app_type_1',
-                            'app_type_2',
+                            'business',
+                            'catalogs',
+                            'education',
+                            'entertainment',
+                            'finance',
+                            'food_drink',
+                            'games',
+                            'health_fitness',
+                            'lifestyle',
+                            'medical',
+                            'music',
+                            'navigation',
+                            'news',
+                            'photo_video',
+                            'productivity',
+                            'reference',
+                            'social_networking',
+                            'sports',
+                            'travel',
+                            'utilities',
+                            'weather',
+                            'adult',
                         ],
                     }).data
                 },
-                mobile_platform () {
+                app_platform () {
                     return Mock.mock({
                         'data|1': [
-                            'mobile_platform_0',
-                            'mobile_platform_1',
-                            'mobile_platform_2',
+                            'ios',
+                            'android',
                         ],
                     }).data
                 },
@@ -100,7 +118,7 @@ const database = applicationData.data
 
 module.exports = {
 
-    [`GET ${apiPrefix}/applications`] (req, res) {
+    [`GET ${apiPrefix}/application`] (req, res) {
         const { query } = req
         let { pageSize, page, ...other } = query
         pageSize = pageSize || 10

@@ -19,23 +19,19 @@ export default {
             "changeOrigin": true,
             "pathRewrite": { "^/api/v1/weather": "/v3/weather" }
         },
-        // '/api/v1/user': {
-        //     "target": "http://127.0.0.1:7001",
-        //     "changeOrigin": true,
-        // },
-        // '/api/v1/offer': {
-        //     "target": "http://127.0.0.1:7001",
-        //     "changeOrigin": true,
-        // },
-        // '/api/v1/affiliate': {
-        //     "target": "http://127.0.0.1:7001",
-        //     "changeOrigin": true,
-        // },
+        '/api/v1/user': {
+            "target": "http://127.0.0.1:7001",
+            "changeOrigin": true,
+        },
+        '/api/v1/campaign': {
+            "target": "http://127.0.0.1:7001",
+            "changeOrigin": true,
+        },
+        '/api/v1/slot': {
+            "target": "http://127.0.0.1:7001",
+            "changeOrigin": true,
+        },
         // '/api/v1/advertiser': {
-        //     "target": "http://127.0.0.1:7001",
-        //     "changeOrigin": true,
-        // },
-        // '/api/v1/tracking-system': {
         //     "target": "http://127.0.0.1:7001",
         //     "changeOrigin": true,
         // },
@@ -47,14 +43,14 @@ export default {
         //     "target": "http://127.0.0.1:7001",
         //     "changeOrigin": true,
         // },
-        // '/api/v1/upload': {
-        //     "target": "http://127.0.0.1:7001",
-        //     "changeOrigin": true,
-        // },
-        // '/api/v1/menus': {
-        //     "target": "http://127.0.0.1:7001",
-        //     "changeOrigin": true,
-        // },
+        '/api/v1/upload': {
+            "target": "http://127.0.0.1:7001",
+            "changeOrigin": true,
+        },
+        '/api/v1/menus': {
+            "target": "http://127.0.0.1:7001",
+            "changeOrigin": true,
+        },
         // "/api/v2": {
         //   "target": "http://192.168.0.110",
         //   "changeOrigin": true,
