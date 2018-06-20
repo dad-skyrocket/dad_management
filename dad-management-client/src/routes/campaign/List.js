@@ -2,14 +2,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Table, Modal } from 'antd'
 import cn from 'classnames'
+import moment from 'moment'
 import { DropOption } from 'components'
 import queryString from 'query-string'
 import AnimTableBody from 'components/DataTable/AnimTableBody'
 import styles from './List.less'
+import { toString as platformToString } from '../../constants/PLATFORM'
 
 const confirm = Modal.confirm
 
-const List = ({ onDuplicateItem, onDeleteItem, onEditItem, isMotion, location, ...tableProps }) => {
+const List = ({ onDuplicateItem, onDeleteItem, onEditItem, isMotion, location, slotList = [], ...tableProps }) => {
     location.query = queryString.parse(location.search)
 
     const handleMenuClick = (record, e) => {
@@ -32,61 +34,77 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, isMotion, location, .
         }
     }
 
+    const slotMap = {}
+    slotList.forEach((slot) => {
+        slotMap[slot.slot_id] = slot
+    })
+
     const columns = [
         {
-            title: '投放名称',
+            title: 'Campaign Name',
             dataIndex: 'camp_name',
             key: 'camp_name',
         },
         {
-            title: '投放状态',
+            title: 'Status',
             dataIndex: 'status',
             key: 'status',
             render: (status) => {
                 switch (status) {
                     case 'active':
-                        return '正常'
+                        return 'Active'
                     case 'pending':
-                        return '审核中'
+                        return 'Pending'
                     case 'paused':
-                        return '暂停'
+                        return 'paused'
                     default:
                         return ''
                 }
             },
         },
         {
-            title: '平台',
-            dataIndex: 'platform',
+            title: 'Platform',
             key: 'platform',
-            render: platform => (platform || []).join(', '),
+            render: (text, record) => {
+                const { slot_ids: slotIds } = record
+                const platformMap = {}
+                slotIds.forEach((slotId) => {
+                    const slot = slotMap[slotId]
+                    if (!platformMap[slot.platform]) {
+                        platformMap[slot.platform] = true
+                    }
+                })
+
+                return Object.keys(platformMap).map(platform => platformToString(platform)).join(', ')
+            },
         },
         {
-            title: 'country',
+            title: 'Country',
             dataIndex: 'country',
             key: 'country',
-            render: country => (country || []).join(', '),
+            render: country => (country || []).join(', ') || 'All',
         },
         {
-            title: 'payment method',
+            title: 'Payment Method',
             dataIndex: 'payment_method',
             key: 'payment_method',
         },
         {
-            title: 'duration',
+            title: 'Duration',
             key: 'duration',
             render: (text, record) => {
-                return `${record.start_time} ~ ${record.end_time}`
+                const format = 'YYYY-MM-DD HH:mm ZZ'
+                return `${moment.utc(record.start_time).format(format)} ~ ${moment.utc(record.end_time).format(format)}`
             },
         },
         {
-            title: '操作',
+            title: 'Operations',
             key: 'operation',
             width: 100,
             render: (text, record) => {
                 return (
                     <DropOption onMenuClick={e => handleMenuClick(record, e)}
-                        menuOptions={[{ key: '1', name: '修改' }, { key: '3', name: '复制' }, { key: '2', name: '删除' }]}
+                        menuOptions={[{ key: '1', name: 'Edit' }, { key: '3', name: 'Duplicate' }, { key: '2', name: 'DELETE' }]}
                     />
                 )
             },
@@ -122,6 +140,7 @@ List.propTypes = {
     onEditItem: PropTypes.func,
     isMotion: PropTypes.bool,
     location: PropTypes.object,
+    slotList: PropTypes.array,
 }
 
 export default List

@@ -56,7 +56,7 @@ export default modelExtend(pageModel, {
 
             if (!(slotList && slotList.length)) {
                 yield put({
-                    type: 'queryAffiliates',
+                    type: 'querySlots',
                 })
             }
 

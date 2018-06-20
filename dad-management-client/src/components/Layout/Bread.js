@@ -24,8 +24,6 @@ const Bread = ({ menu, location }) => {
         }
     }
 
-    console.log(current)
-
     if (!current) {
         pathArray.push(menu[0] || {
             id: 1,

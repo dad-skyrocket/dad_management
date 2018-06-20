@@ -38,6 +38,7 @@ const Offer = ({ location, dispatch, campaign, loading }) => {
 
     const listProps = {
         dataSource: list,
+        slotList,
         loading: loading.effects['campaign/query'],
         pagination,
         location,
