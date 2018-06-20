@@ -18,9 +18,14 @@ const formatPrice = (priceInCent) => {
 
 const transformData = item => ({
     ...item,
-    priceStr: `${formatPrice(item.price)} adc`,
+    priceInDollar: item.price / 100,
+    priceStr: `${formatPrice(item.price / 100)} adc`,
     start_time_obj: moment(item.start_time),
     end_time_obj: moment(item.end_time),
+    country_obj: {
+        country: item.country,
+        all: !(item.country || []).length,
+    },
 })
 
 export default modelExtend(pageModel, {

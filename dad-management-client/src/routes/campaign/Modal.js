@@ -1,11 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Form, Input, InputNumber, Radio, Modal, Select, DatePicker, Icon, Button, Transfer, Alert, message } from 'antd'
+import {
+    Form, Input, InputNumber, Radio, Modal, Select,
+    DatePicker, TimePicker, Icon, Button,
+    Transfer, Alert, message, Checkbox, Tabs,
+} from 'antd'
+
 import probe from 'probe-image-size'
 import { Upload } from 'components'
 import s from './Modal.less'
 import initialCountryMap from '../../utils/country'
+import PLATFORM, { PLATFORM_LIST, toString as platformToString } from '../../constants/PLATFORM'
 
+const TabPane = Tabs.TabPane
 const FormItem = Form.Item
 const Option = Select.Option
 const RadioButton = Radio.Button
@@ -68,6 +75,30 @@ const getUrlType = (url) => {
 }
 
 /* eslint-disable react/no-multi-comp */
+
+class DateTimeSelector extends React.Component { // eslint-disable-line
+    static propTypes = {
+        value: PropTypes.object,
+        onChange: PropTypes.func,
+    }
+
+    render () {
+        const { value, onChange } = this.props
+
+        return (
+            <span>
+                <DatePicker value={value} onChange={onChange} />
+                <TimePicker
+                    value={value}
+                    onChange={onChange}
+                    format="HH:mm"
+                    style={{ marginLeft: '5px' }}
+                />
+            </span>
+        )
+    }
+}
+
 
 class PriceInput extends React.Component { // eslint-disable-line
     static propTypes = {
@@ -158,12 +189,25 @@ class TransferWrapper extends React.Component {
 
 class CountrySelect extends React.Component {
     static propTypes = {
-        value: PropTypes.array,
+        value: PropTypes.shape({
+            country: PropTypes.array,
+            all: PropTypes.bool,
+        }),
         onChange: PropTypes.func,
     }
 
+    handleAllChange = (e) => {
+        this.props.onChange({
+            ...this.props.value,
+            all: e.target.checked,
+        })
+    }
+
     handleChange = (selectedCountryNames = []) => {
-        this.props.onChange(selectedCountryNames.map(text => countryReverseMap[text]))
+        this.props.onChange({
+            ...this.props.value,
+            country: selectedCountryNames.map(text => countryReverseMap[text]),
+        })
     }
 
     render () {
@@ -172,16 +216,22 @@ class CountrySelect extends React.Component {
             return <Option key={c.value} value={c.text}>{ c.text }</Option>
         })
 
+        const { all = true, country = [] } = (this.props.value || {})
+
         return (
-            <Select
-                mode="multiple"
-                style={{ width: '100%' }}
-                placeholder="请选择国家"
-                onChange={this.handleChange}
-                value={(this.props.value || []).map(value => countryMap[value])}
-            >
-                { countryOptions }
-            </Select>
+            <span>
+                <Checkbox checked={all} onChange={this.handleAllChange}>All</Checkbox>
+                <Select
+                    disabled={this.props.value.all}
+                    mode="multiple"
+                    // style={{ width: '100%' }}
+                    placeholder="Choose Country"
+                    onChange={this.handleChange}
+                    value={country.map(value => countryMap[value])}
+                >
+                    { countryOptions }
+                </Select>
+            </span>
         )
     }
 }
@@ -403,7 +453,7 @@ class CreativeEditor extends React.Component {
                 >
                     <div>
                         <Icon type="plus" />
-                        <div className="ant-upload-text">点击上传</div>
+                        <div className="ant-upload-text">Upload</div>
                     </div>
                 </Upload>
                 <div style={{ marginTop: '5px' }}>
@@ -412,7 +462,7 @@ class CreativeEditor extends React.Component {
                         onChange={e => this.setState({ newUrl: e.target.value })}
                     />
                     <Button style={{ verticalAlign: 'bottom' }} onClick={this.addNewUrl}>
-                        <Icon type="upload" /> 添加素材链接
+                        <Icon type="upload" /> Add New Link
                     </Button>
                 </div>
                 <Modal visible={this.state.previewVisible} footer={null} onCancel={this.handleCancel}>
@@ -437,20 +487,105 @@ class SlotSelector extends React.Component {
         slotList: PropTypes.array,
     }
 
-    render () {
-        const { value, onChange, slotList } = this.props
+    constructor (props) {
+        super(props)
+
+        this.resetSlotList(props.slotList)
+
+        this.state = {
+            activeKey: PLATFORM.PC_WEB,
+        }
+    }
+
+    componentWillReceiveProps (nextProps) {
+        if (nextProps.slotList !== this.props.slotList) {
+            this.resetSlotList(nextProps.slotList)
+        }
+    }
+
+    resetSlotList = (slotList = []) => {
+        this.platformSlots = {
+            [PLATFORM.PC_WEB]: slotList.filter(slot => slot.platform === PLATFORM.PC_WEB),
+            [PLATFORM.WAP_WEB]: slotList.filter(slot => slot.platform === PLATFORM.WAP_WEB),
+            [PLATFORM.MOBILE_APP]: slotList.filter(slot => slot.platform === PLATFORM.MOBILE_APP),
+        }
+        this.platformSlotsMap = {
+            [PLATFORM.PC_WEB]: this.platformSlots[PLATFORM.PC_WEB].reduce((result, slot) => {
+                result[slot.slot_id] = slot
+                return result
+            }, {}),
+            [PLATFORM.WAP_WEB]: this.platformSlots[PLATFORM.WAP_WEB].reduce((result, slot) => {
+                result[slot.slot_id] = slot
+                return result
+            }, {}),
+            [PLATFORM.MOBILE_APP]: this.platformSlots[PLATFORM.MOBILE_APP].reduce((result, slot) => {
+                result[slot.slot_id] = slot
+                return result
+            }, {}),
+        }
+    }
+
+    handleTabClick = (activeKey) => {
+        this.setState({
+            activeKey,
+        })
+    }
+
+    handleValueChange = (platform, removeValue = [], addValue = []) => {
+        const { value, onChange } = this.props
+
+        const map = (value || []).reduce((result, v) => {
+            result[v] = true
+            return result
+        }, {})
+
+        removeValue.forEach((v) => {
+            map[v] = false
+        })
+
+        addValue.forEach((v) => {
+            map[v] = true
+        })
+
+        console.log(value, removeValue, addValue)
+
+        onChange(Object.keys(map).filter(k => !!map[k]).map(k => parseInt(k, 10)))
+    }
+
+    renderTabPane = (platform) => {
+        const { value } = this.props
+
+        console.log(value, this.platformSlots[platform])
+
+        const tabValue = (value || []).filter((slotId) => {
+            return this.platformSlotsMap[platform][slotId]
+        })
+
+        const title = <span>{ platformToString(platform) }</span>
+
         return (
-            <div>
+            <TabPane tab={title} key={platform}>
                 <TransferWrapper
-                    dataSource={slotList.map(slot => ({
+                    dataSource={this.platformSlots[platform].map(slot => ({
                         key: slot.slot_id,
                         title: slot.slot_name,
                     }))}
-                    titles={['可选渠道', '已选渠道']}
+                    titles={['Available Slots', 'Selected Slots']}
                     render={_item => _item.title}
-                    value={value}
-                    onChange={onChange}
+                    value={tabValue}
+                    onChange={v => this.handleValueChange(platform, tabValue, v)}
                 />
+            </TabPane>
+        )
+    }
+
+    render () {
+        return (
+            <div>
+                <Tabs activeKey={this.state.activeKey || PLATFORM.PC_WEB} onTabClick={this.handleTabClick}>
+                    { PLATFORM_LIST.map(platform => this.renderTabPane(platform))}
+                </Tabs>
+
             </div>
         )
     }
@@ -480,15 +615,10 @@ const modal = ({
                 key: item.key,
                 camp_id: item.camp_id,
             }
-            data.adv_id = parseInt(data.adv_id, 10)
-            data.cost = Math.round(data.cost_value.number * 100)
-            data.cost_currency = data.cost_value.currency
-            data.cost_value = undefined
-            data.revenue = Math.round(data.revenue_value.number * 100)
-            data.revenue_currency = data.revenue_value.currency
-            data.revenue_vaue = undefined
-            data.expiration_date = data.expiration_date_obj.format('X')
-            data.platform = Array.isArray(data.platform) ? data.platform : [data.platform]
+            data.price = Math.round(data.priceInDollar * 100)
+            data.start_time = data.start_time_obj.format('X')
+            data.end_time = data.end_time_obj.format('X')
+            data.country = data.country_obj.all ? [] : data.country_obj.country
             data.creative = (data.creative || []).map((urlOrFile) => {
                 if (typeof urlOrFile === 'string') {
                     return {
@@ -516,7 +646,7 @@ const modal = ({
                 }
                 return null
             })
-            // console.log(data)
+            console.log(data)
             onOk(data)
         })
     }
@@ -546,14 +676,14 @@ const modal = ({
     return (
         <Modal width={760} {...modalOpts}>
             <Form layout="horizontal">
-                <div className={s['section-name']}>投放信息</div>
-                <FormItem label="投放名称" hasFeedback {...formItemLayout}>
+                <div className={s['section-name']}>Basic</div>
+                <FormItem label="Campaign Name" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('camp_name', {
                         initialValue: item.camp_name,
                         rules: [
                             {
                                 required: true,
-                                message: '请输入投放名称',
+                                message: 'Please input campaign name',
                             },
                         ],
                     })(<Input />)}
@@ -564,58 +694,58 @@ const modal = ({
                         rules: [
                             {
                                 required: true,
-                                message: '请输入投放链接',
+                                message: 'Please input campaign link',
                             },
                             {
                                 type: 'url',
-                                message: '请输入url地址',
+                                message: 'campaign link must be a valid url',
                             },
                         ],
                     })(<Input />)}
                 </FormItem>
                 {
                     modalType === 'update' &&
-                    <FormItem label="投放状态" hasFeedback {...formItemLayout}>
+                    <FormItem label="Status" hasFeedback {...formItemLayout}>
                         {getFieldDecorator('status', {
                             initialValue: item.status || 'pending',
                             rules: [
                                 {
                                     required: true,
-                                    message: '请输入投放状态',
+                                    message: 'Please choose status',
                                 },
                             ],
                         })(
                             <Radio.Group>
-                                <RadioButton value="active">正常</RadioButton>
-                                <RadioButton value="pending">审核中</RadioButton>
-                                <RadioButton value="paused">暂停</RadioButton>
+                                <RadioButton value="active">Active</RadioButton>
+                                <RadioButton value="pending">Pending</RadioButton>
+                                <RadioButton value="paused">Paused</RadioButton>
                             </Radio.Group>
                         )}
                     </FormItem>
                 }
-                <FormItem label="起始时间" hasFeedback {...formItemLayout}>
+                <FormItem label="Start Time" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('start_time_obj', {
                         initialValue: item.start_time_obj,
                         rules: [
                             {
                                 required: true,
-                                message: '请输入起始时间',
+                                message: 'Please choose start time',
                             },
                         ],
-                    })(<DatePicker />)}
+                    })(<DateTimeSelector />)}
                 </FormItem>
-                <FormItem label="结束时间" hasFeedback {...formItemLayout}>
+                <FormItem label="End Time" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('end_time_obj', {
                         initialValue: item.end_time_obj,
                         rules: [
                             {
                                 required: true,
-                                message: '请输入结束时间',
+                                message: 'Please choose end time',
                             },
                         ],
-                    })(<DatePicker />)}
+                    })(<DateTimeSelector />)}
                 </FormItem>
-                <FormItem label="投放备注" hasFeedback {...formItemLayout}>
+                <FormItem label="Description" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('offer_desc', {
                         initialValue: item.offer_desc,
                     })(<Input />)}
@@ -623,29 +753,29 @@ const modal = ({
 
                 <div className={s['section-name']}>Payment</div>
                 <FormItem label="Payment Method" hasFeedback {...formItemLayout}>
-                    {getFieldDecorator('type', {
-                        initialValue: item.payment_method || 'cpm',
+                    {getFieldDecorator('payment_method', {
+                        initialValue: item.payment_method || 'CPM',
                         rules: [
                             {
                                 required: true,
-                                message: '请选择付费类型',
+                                message: 'Please choose payment method',
                             },
                         ],
                     })(
                         <Radio.Group>
-                            <RadioButton value="cpm">CPM</RadioButton>
-                            <RadioButton value="cpc">CPC</RadioButton>
-                            <RadioButton value="cpa">CPA</RadioButton>
+                            <RadioButton value="CPM">CPM</RadioButton>
+                            <RadioButton value="CPC">CPC</RadioButton>
+                            <RadioButton value="CPA">CPA</RadioButton>
                         </Radio.Group>
                     )}
                 </FormItem>
-                <FormItem label="价格" hasFeedback {...formItemLayout}>
-                    {getFieldDecorator('price', {
-                        initialValue: item.price || 0,
+                <FormItem label="Price" hasFeedback {...formItemLayout}>
+                    {getFieldDecorator('priceInDollar', {
+                        initialValue: item.priceInDollar || 0,
                         rules: [
                             {
                                 required: true,
-                                message: '请输入价格',
+                                message: 'Please input price',
                             },
                         ],
                     })(<InputNumber
@@ -655,17 +785,17 @@ const modal = ({
                     />)}
                 </FormItem>
 
-                <div className={s['section-name']}>定向</div>
+                <div className={s['section-name']}>Targeting</div>
                 <FormItem
                     {...formItemLayout}
-                    label="国家"
+                    label="Countries"
                 >
-                    {getFieldDecorator('country', {
-                        initialValue: item.country,
+                    {getFieldDecorator('country_obj', {
+                        initialValue: item.country_obj || { country: [], all: true },
                         rules: [
                             {
                                 required: true,
-                                message: '请选择国家',
+                                message: 'Please choose at least a country',
                             },
                         ],
                     })(
@@ -674,37 +804,14 @@ const modal = ({
                 </FormItem>
                 <FormItem
                     {...formItemLayout}
-                    label="平台"
+                    label="Slots"
                 >
-                    {getFieldDecorator('platform', {
-                        initialValue: Array.isArray(item.platform) ? item.platform[0] : item.platform,
+                    {getFieldDecorator('slot_ids', {
+                        initialValue: item.slot_ids || [],
                         rules: [
                             {
                                 required: true,
-                                message: '请选择平台',
-                            },
-                        ],
-                    })(
-                        <Select
-                            style={{ width: '100%' }}
-                            placeholder="请选择平台"
-                        >
-                            <Option value="ios">iOS</Option>
-                            <Option value="android">Android</Option>
-                            <Option value="others">其他</Option>
-                        </Select>
-                    )}
-                </FormItem>
-                <FormItem
-                    {...formItemLayout}
-                    label="广告位"
-                >
-                    {getFieldDecorator('slots', {
-                        initialValue: item.slots || [],
-                        rules: [
-                            {
-                                required: true,
-                                message: '请选择广告位',
+                                message: 'Please choose slots',
                             },
                         ],
                     })(
@@ -714,10 +821,10 @@ const modal = ({
                     )}
                 </FormItem>
 
-                <div className={s['section-name']}>素材</div>
+                <div className={s['section-name']}>Creative</div>
                 <FormItem
                     {...formItemLayout}
-                    label="素材"
+                    label="Creative"
                 >
                     {getFieldDecorator('creative', {
                         initialValue: item.creative || [],

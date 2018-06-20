@@ -15,11 +15,18 @@ export interface UploadContext {
   };
 }
 
+// const defaultLocale: UploadLocale = {
+//   uploading: '文件上传中',
+//   removeFile: '删除文件',
+//   uploadError: '上传错误',
+//   previewFile: '预览文件',
+// };
+
 const defaultLocale: UploadLocale = {
-  uploading: '文件上传中',
-  removeFile: '删除文件',
-  uploadError: '上传错误',
-  previewFile: '预览文件',
+    uploading: 'Uploading',
+    removeFile: 'Remove File',
+    uploadError: 'Upload Error',
+    previewFile: 'Preview File',
 };
 
 export { UploadProps };

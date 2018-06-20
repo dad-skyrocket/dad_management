@@ -197,7 +197,7 @@ export default class UploadList extends React.Component<UploadListProps, any> {
       }
 
       const header = !isVideo && file.status !== 'uploading' ?
-          <Checkbox checked={file.isIcon} onChange={(e) => this.handleCheck(file, e)} style={{ position: 'absolute', top: '-28px', left: 0, width: '100%' }}>作为Icon</Checkbox> : null
+          <Checkbox checked={file.isIcon} onChange={(e) => this.handleCheck(file, e)} style={{ position: 'absolute', top: '-28px', left: 0, width: '100%' }}>As Icon</Checkbox> : null
 
       return (
         <div className={infoUploadingClass} key={file.uid}>

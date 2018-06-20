@@ -6,14 +6,9 @@ import { Tabs } from 'antd'
 import { routerRedux } from 'dva/router'
 import { Page } from 'components'
 import List from './List'
+import PLATFORM from '../../constants/PLATFORM'
 
 const TabPane = Tabs.TabPane
-
-const PLATFORM = {
-    PC_WEB: 'pc-web',
-    WAP_WEB: 'wap-web',
-    MOBILE_APP: 'mobile-app',
-}
 
 const Application = ({ application, dispatch, loading, location }) => {
     const { list, pagination } = application

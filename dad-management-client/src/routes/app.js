@@ -8,6 +8,8 @@ import { Layout, Loader } from 'components'
 import { classnames, config } from 'utils'
 import { Helmet } from 'react-helmet'
 import { withRouter } from 'dva/router'
+import { LocaleProvider } from 'antd'
+import enUS from 'antd/lib/locale-provider/en_US'
 import '../themes/index.less'
 import './app.less'
 import Error from './error'
@@ -82,33 +84,35 @@ const App = ({ children, dispatch, app, loading, location }) => {
         </div>)
     }
     return (
-        <div>
-            <Loader fullScreen spinning={loading.effects['app/query']} />
-            <Helmet>
-                <title>DAD</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                <link rel="icon" href={logo} type="image/x-icon" />
-                {iconFontJS && <script src={iconFontJS} />}
-                {iconFontCSS && <link rel="stylesheet" href={iconFontCSS} />}
-            </Helmet>
-            <div
-                className={classnames(styles.layout, { [styles.fold]: isNavbar ? false : siderFold }, { [styles.withnavbar]: isNavbar })}
-            >
-                {!isNavbar ? <aside className={classnames(styles.sider, { [styles.light]: !darkTheme })}>
-                    {siderProps.menu.length === 0 ? null : <Sider {...siderProps} />}
-                </aside> : ''}
-                <div className={styles.main}>
-                    <Header {...headerProps} />
-                    <Bread {...breadProps} />
-                    <div className={styles.container}>
-                        <div className={styles.content}>
-                            {hasPermission ? children : <Error />}
+        <LocaleProvider locale={enUS}>
+            <div>
+                <Loader fullScreen spinning={loading.effects['app/query']} />
+                <Helmet>
+                    <title>DAD</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                    <link rel="icon" href={logo} type="image/x-icon" />
+                    {iconFontJS && <script src={iconFontJS} />}
+                    {iconFontCSS && <link rel="stylesheet" href={iconFontCSS} />}
+                </Helmet>
+                <div
+                    className={classnames(styles.layout, { [styles.fold]: isNavbar ? false : siderFold }, { [styles.withnavbar]: isNavbar })}
+                >
+                    {!isNavbar ? <aside className={classnames(styles.sider, { [styles.light]: !darkTheme })}>
+                        {siderProps.menu.length === 0 ? null : <Sider {...siderProps} />}
+                    </aside> : ''}
+                    <div className={styles.main}>
+                        <Header {...headerProps} />
+                        <Bread {...breadProps} />
+                        <div className={styles.container}>
+                            <div className={styles.content}>
+                                {hasPermission ? children : <Error />}
+                            </div>
                         </div>
+                        <Footer />
                     </div>
-                    <Footer />
                 </div>
             </div>
-        </div>
+        </LocaleProvider>
     )
 }
 

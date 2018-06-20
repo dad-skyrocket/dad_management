@@ -12,10 +12,10 @@ const WEB_TYPE = {
 }
 
 const WEB_TYPE_STRING = {
-    forum: 'Forum', // 论坛
-    news: 'News', // 新闻资讯
-    exchange: 'Exchange', // 交易所
-    personal: 'Personal', // 个人站
+    [WEB_TYPE.forum]: 'Forum', // 论坛
+    [WEB_TYPE.news]: 'News', // 新闻资讯
+    [WEB_TYPE.exchange]: 'Exchange', // 交易所
+    [WEB_TYPE.personal]: 'Personal', // 个人站
 }
 
 export const WEB_TYPE_LIST = Object.keys(WEB_TYPE).map(t => WEB_TYPE[t])
