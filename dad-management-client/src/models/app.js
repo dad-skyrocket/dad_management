@@ -105,11 +105,11 @@ export default {
                 })
                 if (location.pathname === '/login') {
                     yield put(routerRedux.push({
-                        pathname: '/offer',
+                        pathname: '/campaign',
                     }))
                 } else if (location.pathname === '/') {
                     yield put(routerRedux.push({
-                        pathname: '/offer',
+                        pathname: '/campaign',
                     }))
                 }
             } else if (config.openPages && config.openPages.indexOf(locationPathname) < 0) {
