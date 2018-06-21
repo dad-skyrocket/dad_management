@@ -9,7 +9,7 @@ import Filter from './Filter'
 import Modal from './Modal'
 
 
-const Offer = ({ location, dispatch, campaign, loading }) => {
+const Campaign = ({ location, dispatch, campaign, loading }) => {
     location.query = queryString.parse(location.search)
     const { list, pagination, currentItem, modalVisible, modalType, slotList } = campaign
     const { pageSize } = pagination
@@ -21,7 +21,7 @@ const Offer = ({ location, dispatch, campaign, loading }) => {
         visible: modalVisible,
         maskClosable: false,
         confirmLoading: loading.effects['campaign/update'],
-        title: `${modalType === 'create' ? '创建投放' : '更新投放'}`,
+        title: `${modalType === 'create' ? 'Create Campaign' : 'Update Campaign'}`,
         wrapClassName: 'vertical-center-modal',
         onOk (data) {
             dispatch({
@@ -117,11 +117,11 @@ const Offer = ({ location, dispatch, campaign, loading }) => {
     )
 }
 
-Offer.propTypes = {
+Campaign.propTypes = {
     campaign: PropTypes.object,
     location: PropTypes.object,
     dispatch: PropTypes.func,
     loading: PropTypes.object,
 }
 
-export default connect(({ campaign, loading }) => ({ campaign, loading }))(Offer)
+export default connect(({ campaign, loading }) => ({ campaign, loading }))(Campaign)
