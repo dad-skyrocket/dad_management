@@ -30,8 +30,8 @@ const Filter = ({
     },
 }) => {
     const formatDate = (fields) => {
-        fields.create_date = fields.create_date ? fields.create_date.format('YYYY-MM-DD') : undefined
-        fields.expiration_date = fields.expiration_date ? fields.expiration_date.format('YYYY-MM-DD') : undefined
+        fields.start_time = fields.start_time ? fields.start_time.format('YYYY-MM-DD') : undefined
+        fields.end_time = fields.end_time ? fields.end_time.format('YYYY-MM-DD') : undefined
     }
 
     const handleSubmit = () => {
@@ -69,47 +69,47 @@ const Filter = ({
         onFilterChange(fields)
     }
 
-    const { camp_id, camp_name, status, create_date, expiration_date } = filter
+    const { camp_id, camp_name, status, start_time, end_time } = filter
 
     return (
         <Row gutter={24}>
             <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-                {getFieldDecorator('camp_id', { initialValue: camp_id })(<Search placeholder="搜索投放Id"
+                {getFieldDecorator('camp_id', { initialValue: camp_id })(<Search placeholder="Search for campaign id"
                     size="large"
                     onSearch={handleSubmit}
                 />)}
             </Col>
             <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-                {getFieldDecorator('camp_name', { initialValue: camp_name })(<Search placeholder="搜索投放名"
+                {getFieldDecorator('camp_name', { initialValue: camp_name })(<Search placeholder="Search for campaign name"
                     size="large"
                     onSearch={handleSubmit}
                 />)}
             </Col>
             <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-                <FilterItem label="投放状态">
+                <FilterItem label="Status">
                     {getFieldDecorator('status', { initialValue: status || 'all' })(
                         <Select style={{ width: '100%' }} size="large" onChange={handleChangeSelect.bind(null, 'status')}>
-                            <Option value="all">全部</Option>
-                            <Option value="active">正常</Option>
-                            <Option value="pending">审核中</Option>
-                            <Option value="paused">暂停</Option>
+                            <Option value="all">All</Option>
+                            <Option value="active">Active</Option>
+                            <Option value="pending">Pending</Option>
+                            <Option value="paused">Paused</Option>
                         </Select>
                     )}
                 </FilterItem>
             </Col>
             <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }} sm={{ span: 12 }}>
-                <FilterItem label="创建时间">
-                    {getFieldDecorator('create_time', { initialValue: create_date })(
+                <FilterItem label="Start Date">
+                    {getFieldDecorator('start_time', { initialValue: start_time })(
                         <DatePicker style={{ width: '100%' }}
                             size="large"
-                            onChange={handleChangeDate.bind(null, 'create_time')}
+                            onChange={handleChangeDate.bind(null, 'start_time')}
                         />,
                     )}
                 </FilterItem>
             </Col>
             <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }} sm={{ span: 12 }}>
-                <FilterItem label="结束时间">
-                    {getFieldDecorator('end_time', { initialValue: expiration_date })(
+                <FilterItem label="End Date">
+                    {getFieldDecorator('end_time', { initialValue: end_time })(
                         <DatePicker style={{ width: '100%' }}
                             size="large"
                             onChange={handleChangeDate.bind(null, 'end_time')}
@@ -124,11 +124,11 @@ const Filter = ({
                             size="large"
                             className="margin-right"
                             onClick={handleSubmit}
-                        >搜索</Button>
-                        <Button size="large" onClick={handleReset}>重置</Button>
+                        >Search</Button>
+                        <Button size="large" onClick={handleReset}>Reset</Button>
                     </div>
                     <div>
-                        <Button size="large" type="ghost" onClick={onAdd}>创建</Button>
+                        <Button size="large" type="ghost" onClick={onAdd}>Create</Button>
                     </div>
                 </div>
             </Col>

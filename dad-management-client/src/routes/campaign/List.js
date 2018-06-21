@@ -19,14 +19,14 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, isMotion, location, s
             onEditItem(record)
         } else if (e.key === '2') {
             confirm({
-                title: <div>{'确定要删除此投放吗?'}<br /><br />{'投放名: '}{record.camp_name}<br />{'投放描述: '}{record.camp_desc}</div>,
+                title: <div>{'Are you sure you want to delete this campaign?'}<br /><br />{'Campaign Name: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}</div>,
                 onOk () {
                     onDeleteItem(record.camp_id)
                 },
             })
         } else if (e.key === '3') {
             confirm({
-                title: <div>{'确定要复制此投放吗?'}<br /><br />{'投放名: '}{record.camp_name}<br />{'投放描述: '}{record.camp_desc}</div>,
+                title: <div>{'Are you sure you want to duplicate this campaign??'}<br /><br />{'Campaign: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}</div>,
                 onOk () {
                     onDuplicateItem(record.camp_id)
                 },
@@ -104,7 +104,7 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, isMotion, location, s
             render: (text, record) => {
                 return (
                     <DropOption onMenuClick={e => handleMenuClick(record, e)}
-                        menuOptions={[{ key: '1', name: 'Edit' }, { key: '3', name: 'Duplicate' }, { key: '2', name: 'DELETE' }]}
+                        menuOptions={[{ key: '1', name: 'Edit' }, { key: '3', name: 'Duplicate' }, { key: '2', name: 'Delete' }]}
                     />
                 )
             },
