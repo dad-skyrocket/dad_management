@@ -1,5 +1,5 @@
 #!/bin/bash
 
-pushd /opt/frontend/dad_management/dad-management-server
+pushd /opt/frontend/dad_management/dad-management-client
 yarn build
 popd
