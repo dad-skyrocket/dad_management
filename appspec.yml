@@ -1,0 +1,14 @@
+version: 0.0
+os: linux
+files:
+  - source: ./
+    destination: /opt/frontend/dad_management/
+hooks:
+  AfterInstall:
+    - location: codedeploy/after_install.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: codedeploy/application_start.sh
+      timeout: 300
+      runas: root
