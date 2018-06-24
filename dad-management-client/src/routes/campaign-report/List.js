@@ -6,6 +6,7 @@ import queryString from 'query-string'
 import AnimTableBody from 'components/DataTable/AnimTableBody'
 import styles from './List.less'
 import { toString as platformToString } from '../../constants/PLATFORM'
+import moment from 'moment/moment'
 
 /* eslint-disable camelcase */
 
@@ -17,6 +18,10 @@ const List = ({ isMotion, location, ...tableProps }) => {
             title: 'Date',
             key: 'date',
             dataIndex: 'date',
+            render: (date) => {
+                const format = 'YYYY-MM-DD HH:mm ZZ'
+                return `${moment.utc(date.start_time).format(format)}`
+            },
         },
         {
             title: 'Campaign Id',
@@ -29,10 +34,10 @@ const List = ({ isMotion, location, ...tableProps }) => {
             dataIndex: 'camp_name',
         },
         {
-            title: 'Platform',
-            dataIndex: 'platform',
-            key: 'platform',
-            render: platform => platformToString(platform),
+            title: 'Platforms',
+            dataIndex: 'platforms',
+            key: 'platforms',
+            render: platforms => (platforms || []).map(platform => platformToString(platform)).join(', '),
         },
         {
             title: 'Clicks',
@@ -63,7 +68,7 @@ const List = ({ isMotion, location, ...tableProps }) => {
                 scroll={{ x: 1250 }}
                 columns={columns}
                 simple
-                rowKey={record => (`${record.offer_id}_${record.platform}_${record.date}`)}
+                rowKey={record => (`${record.camp_id}_${record.platform}_${record.date}`)}
                 getBodyWrapper={getBodyWrapper}
             />
         </div>
