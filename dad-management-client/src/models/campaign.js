@@ -7,7 +7,7 @@
 import modelExtend from 'dva-model-extend'
 import moment from 'moment'
 import { message } from 'antd'
-import { queryList as queryOfferList, query, create, remove, update, duplicate } from 'services/campaign'
+import { queryList as queryOfferList, query, create, remove, update, duplicate, changeStatus } from 'services/campaign'
 import { queryList as querySlotList } from 'services/slot'
 import { pageModel } from './common'
 
@@ -162,6 +162,18 @@ export default modelExtend(pageModel, {
                         currentItem: transformData(data),
                     },
                 })
+            }
+        },
+
+        * changeStatus ({ payload }, { call, put, select }) {
+            const { pagination } = yield select(_ => _.campaign)
+
+            const data = yield call(changeStatus, payload)
+            if (data.success) {
+                yield put({ type: 'hideModal' })
+                yield put({ type: 'query', payload: { page: pagination.current, pageSize: pagination.pageSize } })
+            } else {
+                throw data
             }
         },
     },

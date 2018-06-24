@@ -547,7 +547,7 @@ class SlotSelector extends React.Component {
             map[v] = true
         })
 
-        console.log(value, removeValue, addValue)
+        // console.log(value, removeValue, addValue)
 
         onChange(Object.keys(map).filter(k => !!map[k]).map(k => parseInt(k, 10)))
     }
@@ -555,7 +555,7 @@ class SlotSelector extends React.Component {
     renderTabPane = (platform) => {
         const { value } = this.props
 
-        console.log(value, this.platformSlots[platform])
+        // console.log(value, this.platformSlots[platform])
 
         const tabValue = (value || []).filter((slotId) => {
             return this.platformSlotsMap[platform][slotId]
@@ -646,7 +646,7 @@ const modal = ({
                 }
                 return null
             })
-            console.log(data)
+            // console.log(data)
             onOk(data)
         })
     }

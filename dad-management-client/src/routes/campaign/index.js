@@ -71,6 +71,12 @@ const Campaign = ({ location, dispatch, campaign, loading }) => {
                 payload: id,
             })
         },
+        onChangeStatus (id, status) {
+            dispatch({
+                type: 'campaign/changeStatus',
+                payload: { camp_id: id, status },
+            })
+        },
     }
 
     const filterProps = {

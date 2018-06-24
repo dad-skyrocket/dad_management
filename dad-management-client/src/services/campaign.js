@@ -55,3 +55,11 @@ export async function duplicate (params) {
         data: params,
     })
 }
+
+export async function changeStatus (params) {
+    return request({
+        url: `${campaign}/status`,
+        method: 'put',
+        data: params,
+    })
+}

@@ -11,26 +11,63 @@ import { toString as platformToString } from '../../constants/PLATFORM'
 
 const confirm = Modal.confirm
 
-const List = ({ onDuplicateItem, onDeleteItem, onEditItem, isMotion, location, slotList = [], ...tableProps }) => {
+const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMotion, location, slotList = [], ...tableProps }) => {
     location.query = queryString.parse(location.search)
 
     const handleMenuClick = (record, e) => {
-        if (e.key === '1') {
-            onEditItem(record)
-        } else if (e.key === '2') {
-            confirm({
-                title: <div>{'Are you sure you want to delete this campaign?'}<br /><br />{'Campaign Name: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}</div>,
-                onOk () {
-                    onDeleteItem(record.camp_id)
-                },
-            })
-        } else if (e.key === '3') {
-            confirm({
-                title: <div>{'Are you sure you want to duplicate this campaign??'}<br /><br />{'Campaign: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}</div>,
-                onOk () {
-                    onDuplicateItem(record.camp_id)
-                },
-            })
+        switch (e.key) {
+            case '1':
+                onEditItem(record)
+                break
+            case '2': {
+                confirm({
+                    title: <div>{'Are you sure you want to delete this campaign?'}<br/><br/>{'Campaign Name: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}</div>,
+                    onOk () {
+                        onDeleteItem(record.camp_id)
+                    },
+                })
+                break
+            }
+            case '3': {
+                confirm({
+                    title: <div>{'Are you sure you want to duplicate this campaign??'}<br/><br/>{'Campaign: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}</div>,
+                    onOk () {
+                        onDuplicateItem(record.camp_id)
+                    },
+                })
+                break
+            }
+            case '4': {
+                confirm({
+                    title: (
+                        <div>
+                            {'Are you sure you want to active this campaign?'}
+                            <br /><br />
+                            {'Campaign Name: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}
+                        </div>
+                    ),
+                    onOk () {
+                        onChangeStatus(record.camp_id, 'active')
+                    },
+                })
+                break
+            }
+            case '5': {
+                confirm({
+                    title: (
+                        <div>
+                            {'Are you sure you want to pause this campaign?'}
+                            <br /><br />
+                            {'Campaign Name: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}
+                        </div>
+                    ),
+                    onOk () {
+                        onChangeStatus(record.camp_id, 'paused')
+                    },
+                })
+                break
+            }
+            default:
         }
     }
 
@@ -56,7 +93,7 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, isMotion, location, s
                     case 'pending':
                         return 'Pending'
                     case 'paused':
-                        return 'paused'
+                        return 'Paused'
                     default:
                         return ''
                 }
@@ -89,12 +126,28 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, isMotion, location, s
             dataIndex: 'payment_method',
             key: 'payment_method',
         },
+        // {
+        //     title: 'Duration',
+        //     key: 'duration',
+        //     render: (text, record) => {
+        //         const format = 'YYYY-MM-DD HH:mm ZZ'
+        //         return `${moment.utc(record.start_time).format(format)} ~ ${moment.utc(record.end_time).format(format)}`
+        //     },
+        // },
         {
-            title: 'Duration',
-            key: 'duration',
+            title: 'Start Time',
+            key: 'startTime',
             render: (text, record) => {
                 const format = 'YYYY-MM-DD HH:mm ZZ'
-                return `${moment.utc(record.start_time).format(format)} ~ ${moment.utc(record.end_time).format(format)}`
+                return `${moment.utc(record.start_time).format(format)}`
+            },
+        },
+        {
+            title: 'End Time',
+            key: 'endTime',
+            render: (text, record) => {
+                const format = 'YYYY-MM-DD HH:mm ZZ'
+                return `${moment.utc(record.end_time).format(format)}`
             },
         },
         {
@@ -102,9 +155,49 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, isMotion, location, s
             key: 'operation',
             width: 100,
             render: (text, record) => {
+                const { status } = record
+                let menuOptions = []
+                if (status === 'paused') {
+                    menuOptions.push({
+                        key: '4',
+                        name: 'Activate',
+                    })
+                } else if (status === 'active') {
+                    menuOptions.push({
+                        key: '5',
+                        name: 'Pause',
+                    })
+                } else if (status === 'pending') {
+                    menuOptions.push({
+                        key: '4',
+                        name: 'Activate',
+                    })
+                    menuOptions.push({
+                        key: '5',
+                        name: 'Pause',
+                    })
+                }
+                menuOptions = [
+                    ...menuOptions,
+                    {
+                        key: '6',
+                        isDivider: true,
+                    }, {
+                        key: '1',
+                        name: 'Edit',
+                    }, {
+                        key: '3',
+                        name: 'Duplicate',
+                    }, {
+                        key: '2',
+                        name: 'Delete',
+                    },
+                ]
                 return (
-                    <DropOption onMenuClick={e => handleMenuClick(record, e)}
-                        menuOptions={[{ key: '1', name: 'Edit' }, { key: '3', name: 'Duplicate' }, { key: '2', name: 'Delete' }]}
+                    <DropOption
+                        onMenuClick={e => handleMenuClick(record, e)}
+                        menuOptions={menuOptions}
+                        // menuOptions={[{ key: '1', name: 'Edit' }, { key: '3', name: 'Duplicate' }, { key: '2', name: 'Delete' }]}
                     />
                 )
             },
@@ -138,6 +231,7 @@ List.propTypes = {
     onDuplicateItem: PropTypes.func,
     onDeleteItem: PropTypes.func,
     onEditItem: PropTypes.func,
+    onChangeStatus: PropTypes.func,
     isMotion: PropTypes.bool,
     location: PropTypes.object,
     slotList: PropTypes.array,
