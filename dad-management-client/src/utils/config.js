@@ -24,6 +24,7 @@ module.exports = {
         slot: `${APIV1}/slot/:slot_id`,
         campaigns: `${APIV1}/campaign`, // 投放列表
         campaign: `${APIV1}/campaign/:camp_id`, // 单个投放
+        campaignReport: `${APIV1}/campaign-report`, // 投放报表
 
         // affiliate: `${APIV1}/affiliate`,
         // advertiser: `${APIV1}/advertiser`,

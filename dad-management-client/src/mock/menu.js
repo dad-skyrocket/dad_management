@@ -17,15 +17,15 @@ let database = [
     {
         id: '8',
         icon: 'shopping-cart',
-        name: '投放',
+        name: 'Campaign',
         route: '/campaign',
     },
-    // {
-    //     id: '9',
-    //     icon: 'laptop',
-    //     name: '报表',
-    //     route: '/report',
-    // },
+    {
+        id: '9',
+        icon: 'laptop',
+        name: 'Campaign Report',
+        route: '/campaign-report',
+    },
     // {
     //     id: '1',
     //     icon: 'laptop',

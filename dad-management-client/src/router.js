@@ -28,6 +28,10 @@ const Routers = function ({ history, app }) {
         models: () => [import('./models/campaign')],
         component: () => import('./routes/campaign/'),
     }, {
+        path: '/campaign-report',
+        models: () => [import('./models/campaign-report')],
+        component: () => import('./routes/campaign-report/'),
+    }, {
         path: '/user',
         models: () => [import('./models/user')],
         component: () => import('./routes/user/'),
