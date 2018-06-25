@@ -50,6 +50,18 @@ const Application = ({ application, dispatch, loading, location }) => {
                 }),
             }))
         },
+        onEditItem (item) {
+            dispatch({
+                type: 'application/prepareEdit',
+                payload: item.app_id,
+            })
+        },
+        onChangeStatus (id, status) {
+            dispatch({
+                type: 'application/changeStatus',
+                payload: { app_id: id, status },
+            })
+        },
     }
 
     const handleCreate = () => {

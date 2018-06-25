@@ -78,7 +78,7 @@ export default modelExtend(pageModel, {
         },
 
         * update ({ payload }, { call, put, select }) {
-            const { pagination } = yield select(_ => _.campaign)
+            const { pagination } = yield select(_ => _.application)
 
             const data = yield call(update, payload)
             if (data.success) {
@@ -89,8 +89,9 @@ export default modelExtend(pageModel, {
             }
         },
 
-        * prepareEdit ({ payload: camp_id }, { call, put }) {
-            const data = yield call(query, { camp_id })
+        * prepareEdit ({ payload: app_id }, { call, put }) {
+            console.log(app_id, query)
+            const data = yield call(query, { app_id })
             if (data) {
                 yield put({
                     type: 'showModal',
@@ -103,7 +104,7 @@ export default modelExtend(pageModel, {
         },
 
         * changeStatus ({ payload }, { call, put, select }) {
-            const { pagination } = yield select(_ => _.campaign)
+            const { pagination } = yield select(_ => _.application)
 
             const data = yield call(changeStatus, payload)
             if (data.success) {

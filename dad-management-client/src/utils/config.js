@@ -20,6 +20,7 @@ module.exports = {
         userInfo: `${APIV1}/userInfo`,
 
         applications: `${APIV1}/application`,
+        application: `${APIV1}/application/:app_id`,
         slots: `${APIV1}/slot`,
         slot: `${APIV1}/slot/:slot_id`,
         campaigns: `${APIV1}/campaign`, // 投放列表
