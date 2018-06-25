@@ -41,7 +41,7 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
                 confirm({
                     title: (
                         <div>
-                            {'Are you sure you want to active this campaign?'}
+                            {'Are you sure you want to activate this campaign?'}
                             <br /><br />
                             {'Campaign Name: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}
                         </div>
@@ -197,7 +197,6 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
                     <DropOption
                         onMenuClick={e => handleMenuClick(record, e)}
                         menuOptions={menuOptions}
-                        // menuOptions={[{ key: '1', name: 'Edit' }, { key: '3', name: 'Duplicate' }, { key: '2', name: 'Delete' }]}
                     />
                 )
             },

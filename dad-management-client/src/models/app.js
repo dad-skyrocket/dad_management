@@ -19,13 +19,14 @@ export default {
             visit: [],
         },
         menu: [
-            {
-                id: 1,
-                icon: 'laptop',
-                name: 'Dashboard',
-                router: '/dashboard',
-            },
+            // {
+            //     id: 1,
+            //     icon: 'laptop',
+            //     name: 'Dashboard',
+            //     router: '/dashboard',
+            // },
         ],
+        breadcrumb: [],
         menuPopoverVisible: false,
         siderFold: window.localStorage.getItem(`${prefix}siderFold`) === 'true',
         darkTheme: window.localStorage.getItem(`${prefix}darkTheme`) === 'true',

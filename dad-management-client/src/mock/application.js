@@ -12,17 +12,17 @@ let applicationData = Mock.mock({
     'data|80-100': [
         {
             app_id: '@id',
-            app_type () {
+            app_name: '@domain',
+            app_desc: '@title',
+            status2 () {
                 return Mock.mock({
                     'data|1': [
-                        'app_type_0',
-                        'app_type_1',
-                        'app_type_2',
+                        'active',
+                        'pending',
+                        'paused',
                     ],
                 }).data
             },
-            app_name: '@domain',
-            app_desc: '@title',
             platform () {
                 return Mock.mock({
                     'data|1': [
@@ -32,60 +32,57 @@ let applicationData = Mock.mock({
                     ],
                 }).data
             },
-            app_info: {
-                web_type () {
-                    return Mock.mock({
-                        'data|1': [
-                            'forum',
-                            'news',
-                            'exchange',
-                        ],
-                    }).data
-                },
-                web_url: '@url',
-                pv: '@integer',
-                uv: '@integer',
-
-                app_type () {
-                    return Mock.mock({
-                        'data|1': [
-                            'business',
-                            'catalogs',
-                            'education',
-                            'entertainment',
-                            'finance',
-                            'food_drink',
-                            'games',
-                            'health_fitness',
-                            'lifestyle',
-                            'medical',
-                            'music',
-                            'navigation',
-                            'news',
-                            'photo_video',
-                            'productivity',
-                            'reference',
-                            'social_networking',
-                            'sports',
-                            'travel',
-                            'utilities',
-                            'weather',
-                            'adult',
-                        ],
-                    }).data
-                },
-                app_platform () {
-                    return Mock.mock({
-                        'data|1': [
-                            'ios',
-                            'android',
-                        ],
-                    }).data
-                },
-                package_name: '@title',
-                store_url: '@url',
-                dau: '@integer',
+            web_type () {
+                return Mock.mock({
+                    'data|1': [
+                        'forum',
+                        'news',
+                        'exchange',
+                    ],
+                }).data
             },
+            web_url: '@url',
+            pv: '@integer',
+            uv: '@integer',
+            app_type () {
+                return Mock.mock({
+                    'data|1': [
+                        'business',
+                        'catalogs',
+                        'education',
+                        'entertainment',
+                        'finance',
+                        'food_drink',
+                        'games',
+                        'health_fitness',
+                        'lifestyle',
+                        'medical',
+                        'music',
+                        'navigation',
+                        'news',
+                        'photo_video',
+                        'productivity',
+                        'reference',
+                        'social_networking',
+                        'sports',
+                        'travel',
+                        'utilities',
+                        'weather',
+                        'adult',
+                    ],
+                }).data
+            },
+            app_platform () {
+                return Mock.mock({
+                    'data|1': [
+                        'ios',
+                        'android',
+                    ],
+                }).data
+            },
+            package_name: '@title',
+            store_url: '@url',
+            dau: '@integer',
         },
     ],
 })
@@ -137,7 +134,12 @@ module.exports = {
         }
 
         res.status(200).json({
-            data: newData.slice((page - 1) * pageSize, page * pageSize),
+            data: newData.slice((page - 1) * pageSize, page * pageSize).map(item => {
+                return {
+                    ...item,
+                    status: item.status2,
+                }
+            }),
             total: newData.length,
         })
     },

@@ -5,8 +5,15 @@ let database = [
     {
         id: '10',
         icon: 'shopping-cart',
-        name: '应用',
+        name: 'Application',
         route: '/application',
+    },
+    {
+        id: '101',
+        mpid: '-1',
+        bpid: '10',
+        name: 'Slots',
+        route: '/application/:id',
     },
     // {
     //     id: '11',
@@ -33,7 +40,7 @@ let database = [
     //     route: '/dashboard',
     // },
     {
-        id: '2',
+        id: '2', // menu parent id
         // bpid: '1', // breadcrumb parent id
         name: '用户',
         icon: 'user',

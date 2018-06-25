@@ -746,8 +746,8 @@ const modal = ({
                     })(<DateTimeSelector />)}
                 </FormItem>
                 <FormItem label="Description" hasFeedback {...formItemLayout}>
-                    {getFieldDecorator('offer_desc', {
-                        initialValue: item.offer_desc,
+                    {getFieldDecorator('app_desc', {
+                        initialValue: item.app_desc,
                     })(<Input />)}
                 </FormItem>
 
