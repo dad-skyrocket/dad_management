@@ -115,6 +115,12 @@ const modal = ({
                 camp_id: item.camp_id,
             }
             data.country = data.country_obj.all ? [] : data.country_obj.country
+            data.app_info = {
+                web_type: data.web_type,
+                web_url: data.web_url,
+                pv: data.pv,
+                uv: data.uv,
+            }
             // console.log(data)
             onOk(data)
         })

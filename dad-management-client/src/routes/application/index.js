@@ -12,7 +12,7 @@ import PLATFORM from '../../constants/PLATFORM'
 const TabPane = Tabs.TabPane
 
 const Application = ({ application, dispatch, loading, location }) => {
-    const { list, pagination, currentItem, modalVisible, modalType } = application
+    const { list, pagination, currentItem, modalVisible, modalType, platform } = application
     const { query = {}, pathname } = location
 
     const modalProps = {
@@ -26,7 +26,10 @@ const Application = ({ application, dispatch, loading, location }) => {
         onOk (data) {
             dispatch({
                 type: `application/${modalType}`,
-                payload: data,
+                payload: {
+                    ...data,
+                    platform,
+                },
             })
         },
         onCancel () {
@@ -74,10 +77,14 @@ const Application = ({ application, dispatch, loading, location }) => {
     }
 
     const handleTabClick = (key) => {
+        dispatch({
+            type: 'application/changeTab',
+            payload: key,
+        })
         dispatch(routerRedux.push({
             pathname,
             query: {
-                status: key,
+                platform: key,
             },
         }))
     }
@@ -86,7 +93,7 @@ const Application = ({ application, dispatch, loading, location }) => {
 
     return (
         <Page inner>
-            <Tabs activeKey={query.status || PLATFORM.PC_WEB} onTabClick={handleTabClick} tabBarExtraContent={operations}>
+            <Tabs activeKey={platform || PLATFORM.PC_WEB} onTabClick={handleTabClick} tabBarExtraContent={operations}>
                 <TabPane tab="PC Web" key={PLATFORM.PC_WEB}>
                     <List {...listProps} />
                 </TabPane>

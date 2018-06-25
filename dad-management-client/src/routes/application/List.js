@@ -65,8 +65,11 @@ const List = ({ onEditItem, onChangeStatus, ...tableProps }) => {
         key: 'app_name',
     }, {
         title: 'Type',
-        dataIndex: 'app_type',
-        key: 'app_type',
+        key: 'urlOrAppType',
+        render: (text, record) => {
+            const { web_type, app_type } = record
+            return web_type || app_type
+        },
     }, {
         title: 'Status',
         dataIndex: 'status',

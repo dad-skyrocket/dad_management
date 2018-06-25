@@ -11,7 +11,8 @@
 import modelExtend from 'dva-model-extend'
 import { queryList, query, create, update, changeStatus } from 'services/application'
 import { pageModel } from 'models/common'
-import queryString from 'query-string'
+// import queryString from 'query-string'
+import PLATFORM from '../constants/PLATFORM'
 
 const transformData = item => ({
     ...item,
@@ -29,6 +30,7 @@ export default modelExtend(pageModel, {
         currentItem: {},
         modalVisible: false,
         modalType: 'create',
+        platform: PLATFORM.PC_WEB,
         selectedRowKeys: [],
         filter: {},
     },
@@ -37,27 +39,58 @@ export default modelExtend(pageModel, {
         setup ({ dispatch, history }) {
             history.listen((location) => {
                 if (location.pathname === '/application') {
-                    dispatch({ type: 'query',
+                    const payload = location.query || { page: 1, pageSize: 10 }
+                    dispatch({
+                        type: 'query',
                         payload: {
-                            status: 2,
-                            ...queryString.parse(location.search),
-                        } })
+                            ...payload,
+                            platform: payload.platform || PLATFORM.PC_WEB,
+                        },
+                    })
                 }
             })
         },
+        // setup ({ dispatch, history }) {
+        //     dispatch({ type: 'query',
+        //         payload: {
+        //             platform: PLATFORM.PC_WEB,
+        //             page: 1,
+        //             pageSize: 10,
+        //         } })
+        //     // history.listen((location) => {
+        //     //     if (location.pathname === '/application') {
+        //     //         dispatch({ type: 'query',
+        //     //             payload: {
+        //     //                 platform: PLATFORM.PC_WEB,
+        //     //                 ...queryString.parse(location.search),
+        //     //             } })
+        //     //     }
+        //     // })
+        // },
     },
 
     effects: {
-        * query ({ payload }, { call, put }) {
-            const data = yield call(queryList, payload)
+        * query ({ payload }, { call, put, select }) {
+            const { filter = {} } = yield select(_ => _.application)
+
+            const _payload = {
+                ...filter,
+                ...payload,
+            }
+
+            yield put({
+                type: 'setFilter',
+                payload: _payload,
+            })
+            const data = yield call(queryList, _payload)
             if (data.success) {
                 yield put({
                     type: 'querySuccess',
                     payload: {
                         list: data.data,
                         pagination: {
-                            current: Number(payload.page) || 1,
-                            pageSize: Number(payload.pageSize) || 10,
+                            current: Number(_payload.page) || 1,
+                            pageSize: Number(_payload.pageSize) || 10,
                             total: data.total,
                         },
                     },
@@ -119,6 +152,10 @@ export default modelExtend(pageModel, {
     reducers: {
         setFilter (state, { payload }) {
             return { ...state, filter: payload }
+        },
+
+        changeTab (state, { payload }) {
+            return { ...state, platform: payload }
         },
 
         showModal (state, { payload }) {
