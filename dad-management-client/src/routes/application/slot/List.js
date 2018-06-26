@@ -1,30 +1,44 @@
+/**
+ * List
+ *
+ * @author hyczzhu
+ */
+
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Table, Modal } from 'antd'
-import { Link } from 'react-router-dom'
 import { DropOption } from 'components'
 import styles from './List.less'
-import PLATFORM from '../../constants/PLATFORM'
+import { toString as slotTypeToString } from '../../../constants/SLOT_TYPE'
 
 const confirm = Modal.confirm
 
-const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
+const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
     const handleMenuClick = (record, e) => {
         switch (e.key) {
             case '1':
                 onEditItem(record)
                 break
+            case '2': {
+                confirm({
+                    title: <div>{'Are you sure you want to delete this slot?'}<br/><br/>{'Slot Name: '}{record.slot_name}<br />{'Description: '}{record.slot_desc}</div>,
+                    onOk () {
+                        onDeleteItem(record.slot_id)
+                    },
+                })
+                break
+            }
             case '4': {
                 confirm({
                     title: (
                         <div>
-                            {'Are you sure you want to active this application?'}
+                            {'Are you sure you want to active this slot?'}
                             <br /><br />
-                            {'Campaign Name: '}{record.app_name}<br />{'Description: '}{record.app_desc}
+                            {'Slot Name: '}{record.slot_name}<br />{'Description: '}{record.slot_desc}
                         </div>
                     ),
                     onOk () {
-                        onChangeStatus(record.app_id, 'active')
+                        onChangeStatus(record.slot_id, 'active')
                     },
                 })
                 break
@@ -33,13 +47,13 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
                 confirm({
                     title: (
                         <div>
-                            {'Are you sure you want to pause this application?'}
+                            {'Are you sure you want to pause this slot?'}
                             <br /><br />
-                            {'Campaign Name: '}{record.app_name}<br />{'Description: '}{record.app_desc}
+                            {'Slot Name: '}{record.slot_name}<br />{'Description: '}{record.slot_desc}
                         </div>
                     ),
                     onOk () {
-                        onChangeStatus(record.app_id, 'paused')
+                        onChangeStatus(record.slot_id, 'paused')
                     },
                 })
                 break
@@ -49,28 +63,18 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
     }
 
     const columns = [{
-        title: 'App Id',
-        dataIndex: 'app_id',
-        key: 'app_id',
-        render: app_id => <Link to={`application/${app_id}/slots`}>{app_id}</Link>,
-    }, {
-        title: platform === PLATFORM.MOBILE_APP ? 'Package Name' : 'Url Name',
-        key: 'urlOrPackageName',
-        render: (text, record) => {
-            const { web_url, package_name } = record
-            return web_url || package_name
-        },
+        title: 'Slot Id',
+        dataIndex: 'slot_id',
+        key: 'slot_id',
     }, {
         title: 'Name',
-        dataIndex: 'app_name',
-        key: 'app_name',
+        dataIndex: 'slot_name',
+        key: 'slot_name',
     }, {
         title: 'Type',
-        key: 'urlOrAppType',
-        render: (text, record) => {
-            const { web_type, app_type } = record
-            return web_type || app_type
-        },
+        key: 'slot_type',
+        dataIndex: 'slot_type',
+        render: (slot_type) => slotTypeToString(slot_type),
     }, {
         title: 'Status',
         dataIndex: 'status',
@@ -122,13 +126,15 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
                 }, {
                     key: '1',
                     name: 'Edit',
+                }, {
+                    key: '2',
+                    name: 'Delete',
                 },
             ]
             return (
                 <DropOption
                     onMenuClick={e => handleMenuClick(record, e)}
                     menuOptions={menuOptions}
-                    // menuOptions={[{ key: '1', name: 'Edit' }, { key: '3', name: 'Duplicate' }, { key: '2', name: 'Delete' }]}
                 />
             )
         },
@@ -143,14 +149,14 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
                 columns={columns}
                 simple
                 className={styles.table}
-                rowKey={record => record.app_id}
+                rowKey={record => record.slot_id}
             />
         </div>
     )
 }
 
 List.propTypes = {
-    platform: PropTypes.string,
+    onDeleteItem: PropTypes.func,
     onEditItem: PropTypes.func,
     onChangeStatus: PropTypes.func,
 }

@@ -6,12 +6,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {
-    Form, Input, InputNumber, Modal, Select,
-    Checkbox, Radio,
+    Form, Input, InputNumber, Modal, Select, Radio,
 } from 'antd'
 import CountrySelect from 'components/form/CountrySelect'
 
-import initialCountryMap from '../../utils/country'
 import { WEB_TYPE_LIST, toString as webTypeToString } from '../../constants/WEB_TYPE'
 
 const FormItem = Form.Item

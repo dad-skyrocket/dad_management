@@ -13,7 +13,7 @@ let database = [
         mpid: '-1',
         bpid: '10',
         name: 'Slots',
-        route: '/application/:id',
+        route: '/application/:id/slots',
     },
     // {
     //     id: '11',

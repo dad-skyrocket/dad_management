@@ -16,6 +16,10 @@ const Routers = function ({ history, app }) {
         models: () => [import('./models/application')],
         component: () => import('./routes/application/'),
     }, {
+        path: '/application/:id/slots',
+        models: () => [import('./models/application/slot')],
+        component: () => import('./routes/application/slot'),
+    }, {
         path: '/slot',
         models: () => [import('./models/slot')],
         component: () => import('./routes/slot/'),

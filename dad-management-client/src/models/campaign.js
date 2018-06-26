@@ -8,7 +8,7 @@ import modelExtend from 'dva-model-extend'
 import moment from 'moment'
 import { message } from 'antd'
 import { queryList as queryOfferList, query, create, remove, update, duplicate, changeStatus } from 'services/campaign'
-import { queryList as querySlotList } from 'services/slot'
+import { queryAll as querySlotAll } from 'services/slot'
 import { pageModel } from './common'
 
 const formatPrice = (priceInCent) => {
@@ -92,7 +92,7 @@ export default modelExtend(pageModel, {
 
         * querySlots ({ payload = {} }, { call, put }) {
             try {
-                const data = yield call(querySlotList, payload)
+                const data = yield call(querySlotAll, payload)
                 if (data) {
                     yield put({
                         type: 'querySlotsSuccess',
