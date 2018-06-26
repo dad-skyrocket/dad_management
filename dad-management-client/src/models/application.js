@@ -13,6 +13,7 @@ import { queryList, query, create, update, changeStatus } from 'services/applica
 import { pageModel } from 'models/common'
 // import queryString from 'query-string'
 import PLATFORM from '../constants/PLATFORM'
+import queryString from 'query-string'
 
 const transformData = item => ({
     ...item,
@@ -39,7 +40,13 @@ export default modelExtend(pageModel, {
         setup ({ dispatch, history }) {
             history.listen((location) => {
                 if (location.pathname === '/application') {
-                    const payload = location.query || { page: 1, pageSize: 10 }
+                    const payload = {
+                        page: 1,
+                        pageSize: 10,
+                        ...location.query,
+                        ...queryString.parse(location.search),
+                    }
+                    console.log(location)
                     dispatch({
                         type: 'query',
                         payload: {
@@ -91,7 +98,7 @@ export default modelExtend(pageModel, {
                         pagination: {
                             current: Number(_payload.page) || 1,
                             pageSize: Number(_payload.pageSize) || 10,
-                            total: data.total,
+                            total: data.recordsFiltered,
                         },
                     },
                 })
@@ -112,6 +119,7 @@ export default modelExtend(pageModel, {
 
         * update ({ payload }, { call, put, select }) {
             const { pagination } = yield select(_ => _.application)
+            console.log(payload)
 
             const data = yield call(update, payload)
             if (data.success) {

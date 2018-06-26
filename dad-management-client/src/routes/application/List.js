@@ -4,10 +4,11 @@ import { Table, Modal } from 'antd'
 import { Link } from 'react-router-dom'
 import { DropOption } from 'components'
 import styles from './List.less'
+import PLATFORM from '../../constants/PLATFORM'
 
 const confirm = Modal.confirm
 
-const List = ({ onEditItem, onChangeStatus, ...tableProps }) => {
+const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
     const handleMenuClick = (record, e) => {
         switch (e.key) {
             case '1':
@@ -53,7 +54,7 @@ const List = ({ onEditItem, onChangeStatus, ...tableProps }) => {
         key: 'app_id',
         // render: app_id => <Link to={`application/${app_id}`}>{app_id}</Link>,
     }, {
-        title: 'Url/Package Name',
+        title: platform === PLATFORM.MOBILE_APP ? 'Package Name' : 'Url Name',
         key: 'urlOrPackageName',
         render: (text, record) => {
             const { web_url, package_name } = record
@@ -131,7 +132,7 @@ const List = ({ onEditItem, onChangeStatus, ...tableProps }) => {
                 />
             )
         },
-    },]
+    }]
 
     return (
         <div>
@@ -142,13 +143,14 @@ const List = ({ onEditItem, onChangeStatus, ...tableProps }) => {
                 columns={columns}
                 simple
                 className={styles.table}
-                rowKey={record => record.id}
+                rowKey={record => record.app_id}
             />
         </div>
     )
 }
 
 List.propTypes = {
+    platform: PropTypes.string,
     onEditItem: PropTypes.func,
     onChangeStatus: PropTypes.func,
 }

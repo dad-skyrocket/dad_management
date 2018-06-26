@@ -7,6 +7,7 @@ import { routerRedux } from 'dva/router'
 import { Page } from 'components'
 import List from './List'
 import WebModal from './WebModal'
+import MobileAppModal from './MobileAppModal'
 import PLATFORM from '../../constants/PLATFORM'
 
 const TabPane = Tabs.TabPane
@@ -40,6 +41,7 @@ const Application = ({ application, dispatch, loading, location }) => {
     }
 
     const listProps = {
+        platform,
         pagination,
         dataSource: list,
         loading: loading.effects['application/query'],
@@ -83,9 +85,10 @@ const Application = ({ application, dispatch, loading, location }) => {
         })
         dispatch(routerRedux.push({
             pathname,
-            query: {
+            search: queryString.stringify({
+                ...query,
                 platform: key,
-            },
+            }),
         }))
     }
 
@@ -104,7 +107,8 @@ const Application = ({ application, dispatch, loading, location }) => {
                     <List {...listProps} />
                 </TabPane>
             </Tabs>
-            {modalVisible && <WebModal {...modalProps} />}
+            {modalVisible && platform !== PLATFORM.MOBILE_APP && <WebModal {...modalProps} />}
+            {modalVisible && platform === PLATFORM.MOBILE_APP && <MobileAppModal {...modalProps} />}
         </Page>
     )
 }

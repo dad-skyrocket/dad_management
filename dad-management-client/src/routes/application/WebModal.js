@@ -7,14 +7,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {
     Form, Input, InputNumber, Modal, Select,
-    Checkbox,
+    Checkbox, Radio,
 } from 'antd'
+import CountrySelect from 'components/form/CountrySelect'
 
 import initialCountryMap from '../../utils/country'
 import { WEB_TYPE_LIST, toString as webTypeToString } from '../../constants/WEB_TYPE'
 
 const FormItem = Form.Item
 const Option = Select.Option
+const RadioButton = Radio.Button
 
 const formItemLayout = {
     labelCol: {
@@ -23,73 +25,6 @@ const formItemLayout = {
     wrapperCol: {
         span: 14,
     },
-}
-
-const countryText = (code, name) => `${name} (${code})`
-const countryMap = {
-    ...initialCountryMap,
-}
-Object.keys(countryMap).forEach((key) => {
-    countryMap[key] = countryText(key, countryMap[key])
-})
-const countryReverseMap = {}
-Object.keys(countryMap).forEach((key) => {
-    countryReverseMap[countryMap[key]] = key
-})
-const COUNTRIES = Object.keys(countryMap).map(value => ({
-    value,
-    text: countryMap[value],
-}))
-
-/* eslint-disable react/no-multi-comp */
-
-class CountrySelect extends React.Component {
-    static propTypes = {
-        value: PropTypes.shape({
-            country: PropTypes.array,
-            all: PropTypes.bool,
-        }),
-        onChange: PropTypes.func,
-    }
-
-    handleAllChange = (e) => {
-        this.props.onChange({
-            ...this.props.value,
-            all: e.target.checked,
-        })
-    }
-
-    handleChange = (selectedCountryNames = []) => {
-        this.props.onChange({
-            ...this.props.value,
-            country: selectedCountryNames.map(text => countryReverseMap[text]),
-        })
-    }
-
-    render () {
-        const countryOptions = COUNTRIES.map((c) => {
-            // const text = c.text
-            return <Option key={c.value} value={c.text}>{ c.text }</Option>
-        })
-
-        const { all = true, country = [] } = (this.props.value || {})
-
-        return (
-            <span>
-                <Checkbox checked={all} onChange={this.handleAllChange}>All</Checkbox>
-                <Select
-                    disabled={this.props.value.all}
-                    mode="multiple"
-                    // style={{ width: '100%' }}
-                    placeholder="Choose Country"
-                    onChange={this.handleChange}
-                    value={country.map(value => countryMap[value])}
-                >
-                    { countryOptions }
-                </Select>
-            </span>
-        )
-    }
 }
 
 const modal = ({
@@ -101,7 +36,6 @@ const modal = ({
         getFieldsValue,
     },
     modalType,
-    slotList,
     ...modalProps
 }) => {
     const handleOk = () => {
@@ -112,7 +46,7 @@ const modal = ({
             const data = {
                 ...getFieldsValue(),
                 key: item.key,
-                camp_id: item.camp_id,
+                app_id: item.app_id,
             }
             data.country = data.country_obj.all ? [] : data.country_obj.country
             data.app_info = {
@@ -150,13 +84,33 @@ const modal = ({
                         initialValue: item.app_desc,
                     })(<Input />)}
                 </FormItem>
+                {
+                    modalType === 'update' &&
+                    <FormItem label="Status" hasFeedback {...formItemLayout}>
+                        {getFieldDecorator('status', {
+                            initialValue: item.status || 'pending',
+                            rules: [
+                                {
+                                    required: true,
+                                    message: 'Please choose status',
+                                },
+                            ],
+                        })(
+                            <Radio.Group>
+                                <RadioButton value="active">Active</RadioButton>
+                                <RadioButton value="pending">Pending</RadioButton>
+                                <RadioButton value="paused">Paused</RadioButton>
+                            </Radio.Group>
+                        )}
+                    </FormItem>
+                }
                 <FormItem label="Web Type" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('web_type', {
                         initialValue: item.web_type || WEB_TYPE_LIST[0],
                         rules: [
                             {
                                 required: true,
-                                message: 'Please input campaign name',
+                                message: 'Please select web type',
                             },
                         ],
                     })(<Select>
@@ -183,7 +137,7 @@ const modal = ({
                 </FormItem>
                 <FormItem label="Web Url" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('web_url', {
-                        initialValue: item.camp_url,
+                        initialValue: item.web_url,
                         rules: [
                             {
                                 required: true,
@@ -194,7 +148,7 @@ const modal = ({
                                 message: 'web url must be a valid url',
                             },
                         ],
-                    })(<Input />)}
+                    })(<Input disabled={modalType === 'update'} />)}
                 </FormItem>
                 <FormItem label="PV" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('pv', {
@@ -235,7 +189,6 @@ modal.propTypes = {
     form: PropTypes.object.isRequired,
     type: PropTypes.string,
     modalType: PropTypes.string,
-    slotList: PropTypes.array,
     item: PropTypes.object,
     onOk: PropTypes.func,
 }
