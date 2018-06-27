@@ -65,7 +65,7 @@ const List = ({ isMotion, location, ...tableProps }) => {
                 {...tableProps}
                 className={classnames({ [styles.table]: true, [styles.motion]: isMotion })}
                 bordered
-                scroll={{ x: 1250 }}
+                // scroll={{ x: 1250 }}
                 columns={columns}
                 simple
                 rowKey={record => (`${record.camp_id}_${record.platform}_${record.date}`)}

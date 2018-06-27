@@ -126,9 +126,9 @@ const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
                 }, {
                     key: '1',
                     name: 'Edit',
-                }, {
-                    key: '2',
-                    name: 'Delete',
+                // }, {
+                //     key: '2',
+                //     name: 'Delete',
                 },
             ]
             return (
@@ -145,7 +145,7 @@ const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
             <Table
                 {...tableProps}
                 bordered
-                scroll={{ x: 1200 }}
+                // scroll={{ x: 1200 }}
                 columns={columns}
                 simple
                 className={styles.table}

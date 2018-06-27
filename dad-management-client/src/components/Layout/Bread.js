@@ -9,27 +9,24 @@ import styles from './Bread.less'
 const Bread = ({ menu, location }) => {
     // 匹配当前路由
     let pathArray = []
-    let current
-    for (let index in menu) {
-        if (menu[index].route && pathToRegexp(menu[index].route).exec(location.pathname)) {
-            current = menu[index]
-            break
+    let current;
+    // Find current path item
+    (menu || []).some((item) => {
+        if (item.route && pathToRegexp(item.route).exec(location.pathname)) {
+            current = item
+            return true
         }
-    }
+        return false
+    })
 
     const getPathArray = (item) => {
-        pathArray.unshift(item)
+        pathArray.unshift(item) // add to tail
         if (item.bpid) {
             getPathArray(queryArray(menu, item.bpid, 'id'))
         }
     }
 
     if (!current) {
-        pathArray.push(menu[0] || {
-            id: 1,
-            icon: 'laptop',
-            name: 'Dashboard',
-        })
         pathArray.push({
             id: 404,
             name: 'Not Found',
@@ -41,9 +38,10 @@ const Bread = ({ menu, location }) => {
     // 递归查找父级
     const breads = pathArray.map((item, key) => {
         const content = (
-            <span>{item.icon
-                ? <Icon type={item.icon} style={{ marginRight: 4 }} />
-                : ''}{item.name}</span>
+            <span>
+                { item.icon ? <Icon type={item.icon} style={{ marginRight: 4 }} /> : ''}
+                { item.name }
+            </span>
         )
         return (
             <Breadcrumb.Item key={key}>

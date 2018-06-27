@@ -6,13 +6,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {
-    Form, Input, InputNumber, Modal, Select,
+    Form, Input, InputNumber, Modal, Select, Radio,
 } from 'antd'
 
 import { SLOT_TYPE_LIST, toString as slotTypeToString } from '../../../constants/SLOT_TYPE'
 
 const FormItem = Form.Item
 const Option = Select.Option
+const RadioButton = Radio.Button
 
 const formItemLayout = {
     labelCol: {
@@ -46,12 +47,7 @@ const modal = (
                 ...getFieldsValue(),
                 key: item.key,
                 slot_id: item.slot_id,
-            }
-            data.app_info = {
-                web_type: data.web_type,
-                web_url: data.web_url,
-                pv: data.pv,
-                uv: data.uv,
+                app_id: application.app_id,
             }
             // console.log(data)
             onOk(data)
@@ -78,6 +74,26 @@ const modal = (
                         ],
                     })(<Input />)}
                 </FormItem>
+                {
+                    modalType === 'update' &&
+                    <FormItem label="Status" hasFeedback {...formItemLayout}>
+                        {getFieldDecorator('status', {
+                            initialValue: item.status || 'pending',
+                            rules: [
+                                {
+                                    required: true,
+                                    message: 'Please choose status',
+                                },
+                            ],
+                        })(
+                            <Radio.Group>
+                                <RadioButton value="active">Active</RadioButton>
+                                <RadioButton value="pending">Pending</RadioButton>
+                                <RadioButton value="paused">Paused</RadioButton>
+                            </Radio.Group>
+                        )}
+                    </FormItem>
+                }
                 <FormItem label="Slot Type" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('slot_type', {
                         initialValue: item.slot_type || SLOT_TYPE_LIST[0],
@@ -87,7 +103,7 @@ const modal = (
                                 message: 'Please select slot type',
                             },
                         ],
-                    })(<Select>
+                    })(<Select disabled={modalType === 'update' }>
                         {
                             SLOT_TYPE_LIST.map(slot_type => <Option key={slot_type} value={slot_type}>{ slotTypeToString(slot_type) }</Option>)
                         }
@@ -106,6 +122,7 @@ const modal = (
                         min={0}
                         step={1}
                         precision={0}
+                        disabled={modalType === 'update'}
                     />)}
                     px
                 </FormItem>
@@ -122,6 +139,7 @@ const modal = (
                         min={0}
                         step={1}
                         precision={0}
+                        disabled={modalType === 'update'}
                     />)}
                     px
                 </FormItem>

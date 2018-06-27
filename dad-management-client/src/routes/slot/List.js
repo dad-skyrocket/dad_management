@@ -42,7 +42,7 @@ const List = ({ ...tableProps }) => {
             <Table
                 {...tableProps}
                 bordered
-                scroll={{ x: 1200 }}
+                // scroll={{ x: 1200 }}
                 columns={columns}
                 simple
                 className={styles.table}

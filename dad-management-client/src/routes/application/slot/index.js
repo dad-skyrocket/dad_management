@@ -65,6 +65,12 @@ const ApplicationSlots = ({ applicationSlots, dispatch, loading, location }) => 
                 payload: item.slot_id,
             })
         },
+        onDeleteItem (id) {
+            dispatch({
+                type: 'applicationSlots/delete',
+                payload: id,
+            })
+        },
         onChangeStatus (id, status) {
             dispatch({
                 type: 'applicationSlots/changeStatus',
@@ -80,7 +86,7 @@ const ApplicationSlots = ({ applicationSlots, dispatch, loading, location }) => 
         },
         onAdd () {
             dispatch({
-                type: 'campaign/showModal',
+                type: 'applicationSlots/showModal',
                 payload: {
                     modalType: 'create',
                 },

@@ -41,12 +41,12 @@ export default modelExtend(pageModel, {
             history.listen((location) => {
                 if (location.pathname === '/application') {
                     const payload = {
-                        page: 1,
-                        pageSize: 10,
+                        // page: 1,
+                        // pageSize: 10,
                         ...location.query,
                         ...queryString.parse(location.search),
                     }
-                    console.log(location)
+                    // console.log(location, payload)
                     dispatch({
                         type: 'query',
                         payload: {
@@ -78,11 +78,13 @@ export default modelExtend(pageModel, {
 
     effects: {
         * query ({ payload }, { call, put, select }) {
-            const { filter = {} } = yield select(_ => _.application)
+            const { filter = {}, platform } = yield select(_ => _.application)
+            // console.log(filter, payload, platform)
 
             const _payload = {
                 ...filter,
                 ...payload,
+                platform,
             }
 
             yield put({
