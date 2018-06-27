@@ -95,7 +95,7 @@ const Application = ({ application, dispatch, loading, location }) => {
 
     const operations = <Button onClick={handleCreate}>Create</Button>
 
-    console.log(platform)
+    // console.log(platform)
 
     return (
         <Page inner>

@@ -8,13 +8,11 @@ import PropTypes from 'prop-types'
 import queryString from 'querystring'
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router'
+import { Page } from 'components'
 
 import Filter from './Filter'
 import Modal from './Modal'
 import List from './List'
-
-import styles from './index.less'
-import PLATFORM from '../../../constants/PLATFORM'
 
 const ApplicationSlots = ({ applicationSlots, dispatch, loading, location }) => {
     const { application, list, pagination, currentItem, modalVisible, modalType, platform } = applicationSlots
@@ -95,11 +93,11 @@ const ApplicationSlots = ({ applicationSlots, dispatch, loading, location }) => 
     }
 
     return (
-        <div className={styles.applicationSlots}>
+        <Page inner>
             <Filter {...filterProps} />
             <List {...listProps} />
             {modalVisible && <Modal {...modalProps} />}
-        </div>
+        </Page>
     )
 }
 
