@@ -21,7 +21,7 @@ const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
                 break
             case '2': {
                 confirm({
-                    title: <div>{'Are you sure you want to delete this slot?'}<br/><br/>{'Slot Name: '}{record.slot_name}<br />{'Description: '}{record.slot_desc}</div>,
+                    title: <div style={{ fontWeight: 'initial' }}>{'Are you sure you want to delete this slot?'}<br/><br/>{'Slot Name: '}{record.slot_name}<br />{'Description: '}{record.slot_desc}</div>,
                     onOk () {
                         onDeleteItem(record.slot_id)
                     },
@@ -31,7 +31,7 @@ const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
             case '4': {
                 confirm({
                     title: (
-                        <div>
+                        <div style={{ fontWeight: 'initial' }}>
                             {'Are you sure you want to active this slot?'}
                             <br /><br />
                             {'Slot Name: '}{record.slot_name}<br />{'Description: '}{record.slot_desc}
@@ -46,7 +46,7 @@ const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
             case '5': {
                 confirm({
                     title: (
-                        <div>
+                        <div style={{ fontWeight: 'initial' }}>
                             {'Are you sure you want to pause this slot?'}
                             <br /><br />
                             {'Slot Name: '}{record.slot_name}<br />{'Description: '}{record.slot_desc}
@@ -63,10 +63,10 @@ const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
     }
 
     const columns = [{
-        title: 'Slot Id',
-        dataIndex: 'slot_id',
-        key: 'slot_id',
-    }, {
+    //     title: 'Slot Id',
+    //     dataIndex: 'slot_id',
+    //     key: 'slot_id',
+    // }, {
         title: 'Name',
         dataIndex: 'slot_name',
         key: 'slot_name',

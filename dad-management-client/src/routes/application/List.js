@@ -17,10 +17,10 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
             case '4': {
                 confirm({
                     title: (
-                        <div>
+                        <div style={{ fontWeight: 'initial' }}>
                             {'Are you sure you want to active this application?'}
                             <br /><br />
-                            {'Campaign Name: '}{record.app_name}<br />{'Description: '}{record.app_desc}
+                            {'Application Name: '}{record.app_name}<br />{'Description: '}{record.app_desc}
                         </div>
                     ),
                     onOk () {
@@ -32,10 +32,10 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
             case '5': {
                 confirm({
                     title: (
-                        <div>
+                        <div style={{ fontWeight: 'initial' }}>
                             {'Are you sure you want to pause this application?'}
                             <br /><br />
-                            {'Campaign Name: '}{record.app_name}<br />{'Description: '}{record.app_desc}
+                            {'Application Name: '}{record.app_name}<br />{'Description: '}{record.app_desc}
                         </div>
                     ),
                     onOk () {
@@ -49,10 +49,13 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
     }
 
     const columns = [{
+        title: 'Name',
+        key: 'app_name',
+        render: (text, { app_id, app_name }) => <Link to={`application/${app_id}/slots`}>{app_name}</Link>,
+    }, {
         title: 'App Id',
         dataIndex: 'app_id',
         key: 'app_id',
-        render: app_id => <Link to={`application/${app_id}/slots`}>{app_id}</Link>,
     }, {
         title: platform === PLATFORM.MOBILE_APP ? 'Package Name' : 'Url Name',
         key: 'urlOrPackageName',
@@ -60,10 +63,6 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
             const { web_url, package_name } = record
             return web_url || package_name
         },
-    }, {
-        title: 'Name',
-        dataIndex: 'app_name',
-        key: 'app_name',
     }, {
         title: 'Type',
         key: 'urlOrAppType',

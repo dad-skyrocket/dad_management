@@ -19,7 +19,7 @@ const List = ({ isMotion, location, ...tableProps }) => {
             key: 'date',
             dataIndex: 'date',
             render: (date) => {
-                const format = 'YYYY-MM-DD HH:mm ZZ'
+                const format = 'YYYY-MM-DD HH:mm'
                 return `${moment.utc(date.start_time).format(format)}`
             },
         },
@@ -38,6 +38,11 @@ const List = ({ isMotion, location, ...tableProps }) => {
             dataIndex: 'platforms',
             key: 'platforms',
             render: platforms => (platforms || []).map(platform => platformToString(platform)).join(', '),
+        },
+        {
+            title: 'Impression',
+            dataIndex: 'impressions',
+            key: 'impressions',
         },
         {
             title: 'Clicks',

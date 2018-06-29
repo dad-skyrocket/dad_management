@@ -121,7 +121,6 @@ export default modelExtend(pageModel, {
 
         * update ({ payload }, { call, put, select }) {
             const { pagination } = yield select(_ => _.application)
-            console.log(payload)
 
             const data = yield call(update, payload)
             if (data.success) {

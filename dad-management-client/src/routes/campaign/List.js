@@ -21,7 +21,12 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
                 break
             case '2': {
                 confirm({
-                    title: <div>{'Are you sure you want to delete this campaign?'}<br/><br/>{'Campaign Name: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}</div>,
+                    title: (
+                        <div style={{ fontWeight: 'initial' }}>
+                            {'Are you sure you want to delete this campaign?'}
+                            <br /><br />
+                            {'Campaign Name: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}</div>
+                    ),
                     onOk () {
                         onDeleteItem(record.camp_id)
                     },
@@ -30,7 +35,13 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
             }
             case '3': {
                 confirm({
-                    title: <div>{'Are you sure you want to duplicate this campaign??'}<br/><br/>{'Campaign: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}</div>,
+                    title: (
+                        <div style={{ fontWeight: 'initial' }}>
+                            {'Are you sure you want to duplicate this campaign??'}
+                            <br /><br />
+                            {'Campaign: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}
+                        </div>
+                    ),
                     onOk () {
                         onDuplicateItem(record.camp_id)
                     },
@@ -40,7 +51,7 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
             case '4': {
                 confirm({
                     title: (
-                        <div>
+                        <div style={{ fontWeight: 'initial' }}>
                             {'Are you sure you want to activate this campaign?'}
                             <br /><br />
                             {'Campaign Name: '}{record.camp_name}<br />{'Description: '}{record.camp_desc}
@@ -126,19 +137,11 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
             dataIndex: 'payment_method',
             key: 'payment_method',
         },
-        // {
-        //     title: 'Duration',
-        //     key: 'duration',
-        //     render: (text, record) => {
-        //         const format = 'YYYY-MM-DD HH:mm ZZ'
-        //         return `${moment.utc(record.start_time).format(format)} ~ ${moment.utc(record.end_time).format(format)}`
-        //     },
-        // },
         {
             title: 'Start Time',
             key: 'startTime',
             render: (text, record) => {
-                const format = 'YYYY-MM-DD HH:mm ZZ'
+                const format = 'YYYY-MM-DD HH:mm'
                 return `${moment.utc(record.start_time).format(format)}`
             },
         },
@@ -146,7 +149,7 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
             title: 'End Time',
             key: 'endTime',
             render: (text, record) => {
-                const format = 'YYYY-MM-DD HH:mm ZZ'
+                const format = 'YYYY-MM-DD HH:mm'
                 return `${moment.utc(record.end_time).format(format)}`
             },
         },

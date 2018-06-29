@@ -5,32 +5,43 @@
  */
 import pathToRegexp from 'path-to-regexp'
 import modelExtend from 'dva-model-extend'
+import queryString from 'query-string'
 import { message } from 'antd/lib/index'
 import { queryList, query, create, update, remove, changeStatus } from '../../services/slot'
 import { query as queryApplication } from '../../services/application'
 import { pageModel } from '../common'
 
 const transformData = item => item
+const initialState = {
+    application: null,
+    currentItem: {},
+    modalVisible: false,
+    modalType: 'create',
+    selectedRowKeys: [],
+    filter: {},
+}
 
 export default modelExtend(pageModel, {
 
     namespace: 'applicationSlots',
 
-    state: {
-        application: null,
-        currentItem: {},
-        modalVisible: false,
-        modalType: 'create',
-        selectedRowKeys: [],
-        filter: {},
-    },
+    state: initialState,
 
     subscriptions: {
         setup ({ dispatch, history }) {
-            history.listen(({ pathname }) => {
-                const match = pathToRegexp('/application/:id/slots').exec(pathname)
+            history.listen((location) => {
+                const match = pathToRegexp('/application/:id/slots').exec(location.pathname)
                 if (match) {
-                    dispatch({ type: 'query', payload: { app_id: match[1] } })
+                    const payload = {
+                        page: 1,
+                        pageSize: 10,
+                        ...location.query,
+                        ...queryString.parse(location.search),
+                        app_id: match[1],
+                    }
+                    dispatch({ type: 'query', payload })
+                } else {
+                    dispatch({ type: 'reset' })
                 }
             })
         },
@@ -40,7 +51,7 @@ export default modelExtend(pageModel, {
         * query ({ payload }, { call, put, select }) {
             const { application, filter = {} } = yield select(_ => _.applicationSlots)
 
-            if (!(application)) {
+            if (!application || (payload && payload.app_id && application.app_id !== payload.app_id)) {
                 yield put({
                     type: 'queryApplication',
                     payload: {
@@ -59,7 +70,7 @@ export default modelExtend(pageModel, {
                 payload: _payload,
             })
 
-            const data = yield call(queryList, payload)
+            const data = yield call(queryList, _payload)
             if (data) {
                 yield put({
                     type: 'querySuccess',
@@ -103,7 +114,6 @@ export default modelExtend(pageModel, {
 
         * update ({ payload }, { call, put, select }) {
             const { pagination } = yield select(_ => _.applicationSlots)
-            console.log(payload)
 
             const data = yield call(update, payload)
             if (data.success) {
@@ -155,6 +165,10 @@ export default modelExtend(pageModel, {
     },
 
     reducers: {
+        reset () {
+            return { ...initialState }
+        },
+
         setFilter (state, { payload }) {
             return { ...state, filter: payload }
         },
