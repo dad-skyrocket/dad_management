@@ -592,6 +592,8 @@ class SlotSelector extends React.Component {
 }
 
 const modal = ({
+    isAdmin,
+    advList,
     item = {},
     onOk,
     form: {
@@ -673,10 +675,30 @@ const modal = ({
         })
     }
 
+    // console.log(item)
+
     return (
         <Modal width={760} {...modalOpts}>
             <Form layout="horizontal">
                 <div className={s['section-name']}>Basic</div>
+                {
+                    isAdmin ?
+                        <FormItem label="Advertiser" hasFeedback {...formItemLayout}>
+                            {getFieldDecorator('adv_id', {
+                                initialValue: item.adv_id && `${item.adv_id}`,
+                                rules: [
+                                    {
+                                        required: true,
+                                        message: 'Please select advertiser',
+                                    },
+                                ],
+                            })(<Select style={{ width: '100%' }} size="large" disabled={modalType === 'update'}>
+                                {
+                                    (advList || []).map(adv => <Option key={adv.adv_id} value={`${adv.adv_id}`}>{adv.adv_name}</Option>)
+                                }
+                            </Select>)}
+                        </FormItem> : null
+                }
                 <FormItem label="Campaign Name" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('camp_name', {
                         initialValue: item.camp_name,
@@ -838,6 +860,8 @@ const modal = ({
 }
 
 modal.propTypes = {
+    isAdmin: PropTypes.bool,
+    advList: PropTypes.array,
     form: PropTypes.object.isRequired,
     type: PropTypes.string,
     modalType: PropTypes.string,

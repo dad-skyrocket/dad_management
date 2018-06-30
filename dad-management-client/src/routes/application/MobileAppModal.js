@@ -26,6 +26,8 @@ const formItemLayout = {
 }
 
 const modal = ({
+                   isAdmin,
+                   pubList,
                    item = {},
                    onOk,
                    form: {
@@ -67,6 +69,24 @@ const modal = ({
     return (
         <Modal width={760} {...modalOpts}>
             <Form layout="horizontal">
+                {
+                    isAdmin ?
+                        <FormItem label="Publisher" hasFeedback {...formItemLayout}>
+                            {getFieldDecorator('pub_id', {
+                                initialValue: item.pub_id && `${item.pub_id}`,
+                                rules: [
+                                    {
+                                        required: true,
+                                        message: 'Please select publisher',
+                                    },
+                                ],
+                            })(<Select style={{ width: '100%' }} size="large" disabled={modalType === 'update'}>
+                                {
+                                    (pubList || []).map(pub => <Option key={pub.pub_id} value={`${pub.pub_id}`}>{pub.pub_name}</Option>)
+                                }
+                            </Select>)}
+                        </FormItem> : null
+                }
                 <FormItem label="App Name" hasFeedback {...formItemLayout}>
                     {getFieldDecorator('app_name', {
                         initialValue: item.app_name,
@@ -197,6 +217,8 @@ const modal = ({
 }
 
 modal.propTypes = {
+    isAdmin: PropTypes.bool,
+    pubList: PropTypes.array,
     form: PropTypes.object.isRequired,
     type: PropTypes.string,
     modalType: PropTypes.string,

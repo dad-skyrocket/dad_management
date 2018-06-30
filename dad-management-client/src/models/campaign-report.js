@@ -9,6 +9,8 @@ import modelExtend from 'dva-model-extend'
 // import { message } from 'antd'
 import { queryList as queryReport, transformData } from 'services/campaign-report'
 // import { queryList as querySlotList } from 'services/slot'
+import { queryAll as queryAdvAll } from 'services/advertiser'
+import { message } from 'antd/lib/index'
 import { pageModel } from './common'
 
 export default modelExtend(pageModel, {
@@ -17,6 +19,7 @@ export default modelExtend(pageModel, {
     state: {
         list: [], // conversion list
         filter: {},
+        advList: [], // for admin
     },
 
     subscriptions: {
@@ -36,7 +39,14 @@ export default modelExtend(pageModel, {
     effects: {
 
         * query ({ payload = {} }, { call, put, select }) {
-            const { filter } = yield select(_ => _.campaignReport)
+            const { isAdmin } = yield select(_ => _.app)
+            const { filter, advList } = yield select(_ => _.campaignReport)
+
+            if (isAdmin && !(advList && advList.length)) {
+                yield put({
+                    type: 'queryAdvs',
+                })
+            }
 
             const currentDate = moment().format('YYYY-MM-DD')
             const initial = {
@@ -75,11 +85,30 @@ export default modelExtend(pageModel, {
                 })
             }
         },
+
+        * queryAdvs ({ payload = {} }, { call, put }) {
+            try {
+                const data = yield call(queryAdvAll, payload)
+                if (data) {
+                    yield put({
+                        type: 'queryAdvsSuccess',
+                        payload: {
+                            list: data.data || [],
+                        },
+                    })
+                }
+            } catch (e) {
+                message.error('Advertisers query fails, please click search and try again')
+            }
+        },
     },
 
     reducers: {
         setFilter (state, { payload }) {
             return { ...state, filter: payload }
+        },
+        queryAdvsSuccess (state, { payload }) {
+            return { ...state, advList: payload.list }
         },
     },
 })

@@ -1,5 +1,5 @@
 /**
- * offer.js
+ * campaign.js
  *
  * @author hyczzhu
  */
@@ -9,6 +9,7 @@ import moment from 'moment'
 import { message } from 'antd'
 import { queryList as queryOfferList, query, create, remove, update, duplicate, changeStatus } from 'services/campaign'
 import { queryAll as querySlotAll } from 'services/slot'
+import { queryAll as queryAdvAll } from 'services/advertiser'
 import { pageModel } from './common'
 
 const formatPrice = (priceInCent) => {
@@ -38,6 +39,7 @@ export default modelExtend(pageModel, {
         selectedRowKeys: [],
         slotList: [],
         filter: {},
+        advList: [], // for admin
     },
 
     subscriptions: {
@@ -57,11 +59,18 @@ export default modelExtend(pageModel, {
     effects: {
 
         * query ({ payload = {} }, { call, put, select }) {
-            const { slotList, filter = {} } = yield select(_ => _.campaign)
+            const { isAdmin } = yield select(_ => _.app)
+            const { slotList, filter = {}, advList } = yield select(_ => _.campaign)
 
             if (!(slotList && slotList.length)) {
                 yield put({
                     type: 'querySlots',
+                })
+            }
+
+            if (isAdmin && !(advList && advList.length)) {
+                yield put({
+                    type: 'queryAdvs',
                 })
             }
 
@@ -102,7 +111,23 @@ export default modelExtend(pageModel, {
                     })
                 }
             } catch (e) {
-                message.error('获取广告位失败, 请点击搜索重试')
+                message.error('Slots query fails, please click search and try again')
+            }
+        },
+
+        * queryAdvs ({ payload = {} }, { call, put }) {
+            try {
+                const data = yield call(queryAdvAll, payload)
+                if (data) {
+                    yield put({
+                        type: 'queryAdvsSuccess',
+                        payload: {
+                            list: data.data || [],
+                        },
+                    })
+                }
+            } catch (e) {
+                message.error('Advertisers query fails, please click search and try again')
             }
         },
 
@@ -185,6 +210,10 @@ export default modelExtend(pageModel, {
 
         querySlotsSuccess (state, { payload }) {
             return { ...state, slotList: payload.list }
+        },
+
+        queryAdvsSuccess (state, { payload }) {
+            return { ...state, advList: payload.list }
         },
 
         showModal (state, { payload }) {

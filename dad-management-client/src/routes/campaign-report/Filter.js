@@ -42,6 +42,8 @@ function s2ab (s/* :string */)/* :ArrayBuffer */ {
 }
 
 const Filter = ({
+    isAdmin,
+    advList,
     onFilterChange,
     filter,
     form: {
@@ -122,7 +124,7 @@ const Filter = ({
         request({
             method: 'get',
             data: fields,
-            url: config.api.report,
+            url: config.api.campaignReport,
         }).then((res) => {
             const data = [[
                 'Date',
@@ -150,7 +152,7 @@ const Filter = ({
         return current && current.valueOf() < (Date.now() - 3600000 * 24 * 31 * 3) // eslint-disable-line
     }
 
-    const { camp_id, camp_name, platform, date_range, timezone } = filter
+    const { camp_id, camp_name, platform, date_range, timezone, adv_id } = filter
 
     return (
         <Row gutter={24}>
@@ -217,6 +219,21 @@ const Filter = ({
                     )}
                 </FilterItem>
             </Col>
+            {
+                isAdmin ?
+                    <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }} sm={{ span: 12 }}>
+                        <FilterItem label="Advertisers">
+                            {getFieldDecorator('adv_id', { initialValue: adv_id || 'all' })(
+                                <Select style={{ width: '100%' }} size="large" onChange={handleChangeSelect.bind(null, 'adv_id')}>
+                                    <Option value="all">All</Option>
+                                    {
+                                        (advList || []).map(adv => <Option key={adv.adv_id} value={`${adv.adv_id}`}>{adv.adv_name}</Option>)
+                                    }
+                                </Select>
+                            )}
+                        </FilterItem>
+                    </Col> : null
+            }
             <Col {...TwoColProps} xl={{ span: 10 }} md={{ span: 24 }} sm={{ span: 24 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                     <div>
@@ -237,11 +254,12 @@ const Filter = ({
 }
 
 Filter.propTypes = {
+    isAdmin: PropTypes.bool,
+    advList: PropTypes.array,
     onAdd: PropTypes.func,
     form: PropTypes.object,
     filter: PropTypes.object,
     onFilterChange: PropTypes.func,
-    affiliateList: PropTypes.array,
 }
 
 export default Form.create()(Filter)

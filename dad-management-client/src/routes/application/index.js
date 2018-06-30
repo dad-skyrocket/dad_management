@@ -5,24 +5,30 @@ import { connect } from 'dva'
 import { Tabs, Button } from 'antd'
 import { routerRedux } from 'dva/router'
 import { Page } from 'components'
+
+import PLATFORM, { toString as platformToString } from '../../constants/PLATFORM'
+
+import Filter from './Filter'
 import List from './List'
 import WebModal from './WebModal'
 import MobileAppModal from './MobileAppModal'
-import PLATFORM from '../../constants/PLATFORM'
 
 const TabPane = Tabs.TabPane
 
-const Application = ({ application, dispatch, loading, location }) => {
-    const { list, pagination, currentItem, modalVisible, modalType, platform } = application
+const Application = ({ isAdmin, application, dispatch, loading, location }) => {
+    const { list, pagination, currentItem, modalVisible, modalType, platform, pubList } = application
     const { query = {}, pathname } = location
+    const { pageSize } = pagination
 
     const modalProps = {
+        isAdmin,
+        pubList,
         modalType,
         item: modalType === 'create' ? {} : currentItem,
         visible: modalVisible,
         maskClosable: false,
         confirmLoading: loading.effects['application/update'],
-        title: `${modalType === 'create' ? 'Create Application' : 'Update Application'}`,
+        title: `${modalType === 'create' ? `Create Application for ${platformToString(platform)}` : 'Update Application'}`,
         wrapClassName: 'vertical-center-modal',
         onOk (data) {
             dispatch({
@@ -97,8 +103,35 @@ const Application = ({ application, dispatch, loading, location }) => {
 
     // console.log(platform)
 
+    const filterProps = {
+        isAdmin,
+        pubList,
+        filter: {
+            ...location.query,
+        },
+        onFilterChange (value) {
+            dispatch(routerRedux.push({
+                pathname: location.pathname,
+                query: {
+                    ...value,
+                    page: 1,
+                    pageSize,
+                },
+            }))
+        },
+        onAdd () {
+            dispatch({
+                type: 'application/showModal',
+                payload: {
+                    modalType: 'create',
+                },
+            })
+        },
+    }
+
     return (
         <Page inner>
+            <Filter {...filterProps} />
             <Tabs activeKey={platform || PLATFORM.PC_WEB} onTabClick={handleTabClick} tabBarExtraContent={operations}>
                 <TabPane tab="PC Web" key={PLATFORM.PC_WEB}>
                     <List {...listProps} />
@@ -117,10 +150,11 @@ const Application = ({ application, dispatch, loading, location }) => {
 }
 
 Application.propTypes = {
+    isAdmin: PropTypes.bool,
     application: PropTypes.object,
     loading: PropTypes.object,
     location: PropTypes.object,
     dispatch: PropTypes.func,
 }
 
-export default connect(({ application, loading }) => ({ application, loading }))(Application)
+export default connect(({ application, loading, app }) => ({ application, loading, isAdmin: app.isAdmin }))(Application)

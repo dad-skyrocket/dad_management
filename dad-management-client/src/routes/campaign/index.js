@@ -9,12 +9,14 @@ import Filter from './Filter'
 import Modal from './Modal'
 
 
-const Campaign = ({ location, dispatch, campaign, loading }) => {
+const Campaign = ({ location, dispatch, campaign, loading, isAdmin }) => {
     location.query = queryString.parse(location.search)
-    const { list, pagination, currentItem, modalVisible, modalType, slotList } = campaign
+    const { list, pagination, currentItem, modalVisible, modalType, slotList, advList } = campaign
     const { pageSize } = pagination
 
     const modalProps = {
+        isAdmin,
+        advList,
         modalType,
         slotList,
         item: modalType === 'create' ? {} : currentItem,
@@ -80,6 +82,8 @@ const Campaign = ({ location, dispatch, campaign, loading }) => {
     }
 
     const filterProps = {
+        isAdmin,
+        advList: campaign.advList,
         filter: {
             ...location.query,
         },
@@ -124,10 +128,11 @@ const Campaign = ({ location, dispatch, campaign, loading }) => {
 }
 
 Campaign.propTypes = {
+    isAdmin: PropTypes.bool,
     campaign: PropTypes.object,
     location: PropTypes.object,
     dispatch: PropTypes.func,
     loading: PropTypes.object,
 }
 
-export default connect(({ campaign, loading }) => ({ campaign, loading }))(Campaign)
+export default connect(({ campaign, loading, app }) => ({ campaign, loading, isAdmin: app.isAdmin }))(Campaign)

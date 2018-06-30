@@ -3,17 +3,14 @@
  *
  * @author hyczzhu
  */
-/**
- * slot
- *
- * @author hyczzhu
- */
 import modelExtend from 'dva-model-extend'
 import queryString from 'query-string'
 import { queryList, query, create, update, changeStatus } from 'services/application'
+import { queryAll as queryPubAll } from 'services/publisher'
 import { pageModel } from 'models/common'
 // import queryString from 'query-string'
 import PLATFORM from '../constants/PLATFORM'
+import { message } from 'antd/lib/index'
 
 const transformData = item => ({
     ...item,
@@ -34,6 +31,7 @@ export default modelExtend(pageModel, {
         platform: PLATFORM.PC_WEB,
         selectedRowKeys: [],
         filter: {},
+        pubList: [], // for admin
     },
 
     subscriptions: {
@@ -78,15 +76,26 @@ export default modelExtend(pageModel, {
 
     effects: {
         * query ({ payload }, { call, put, select }) {
-            const { filter = {}, platform } = yield select(_ => _.application)
+            const { isAdmin } = yield select(_ => _.app)
+            const { filter = {}, platform, pubList } = yield select(_ => _.application)
             // console.log(filter, payload, platform)
+
+            if (isAdmin && !(pubList && pubList.length)) {
+                yield put({
+                    type: 'queryPubs',
+                })
+            }
 
             const _payload = {
                 ...filter,
-                ...payload,
                 platform,
+                ...payload,
             }
 
+            yield put({
+                type: 'changeTab',
+                payload: _payload.platform,
+            })
             yield put({
                 type: 'setFilter',
                 payload: _payload,
@@ -155,11 +164,31 @@ export default modelExtend(pageModel, {
                 throw data
             }
         },
+
+        * queryPubs ({ payload = {} }, { call, put }) {
+            try {
+                const data = yield call(queryPubAll, payload)
+                if (data) {
+                    yield put({
+                        type: 'queryPubsSuccess',
+                        payload: {
+                            list: data.data || [],
+                        },
+                    })
+                }
+            } catch (e) {
+                message.error('Publishers query fails, please click search and try again')
+            }
+        },
     },
 
     reducers: {
         setFilter (state, { payload }) {
             return { ...state, filter: payload }
+        },
+
+        queryPubsSuccess (state, { payload }) {
+            return { ...state, pubList: payload.list }
         },
 
         changeTab (state, { payload }) {

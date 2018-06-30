@@ -7,13 +7,12 @@ import queryString from 'query-string'
 import List from './List'
 import Filter from './Filter'
 
-const CampaignReport = ({ location, dispatch, report, loading }) => {
+const CampaignReport = ({ location, dispatch, report, loading, isAdmin }) => {
     location.query = queryString.parse(location.search)
-    const { list, pagination, affiliateList } = report
+    const { list, pagination, advList } = report
     const { pageSize } = pagination
 
     const listProps = {
-        affiliateList,
         dataSource: list,
         loading: loading.effects['campaign-report/query'],
         pagination,
@@ -32,10 +31,11 @@ const CampaignReport = ({ location, dispatch, report, loading }) => {
     }
 
     const filterProps = {
+        isAdmin,
+        advList,
         filter: {
             ...location.query,
         },
-        affiliateList,
         onFilterChange (value) {
             dispatch(routerRedux.push({
                 pathname: location.pathname,
@@ -63,4 +63,4 @@ CampaignReport.propTypes = {
     loading: PropTypes.object,
 }
 
-export default connect(({ campaignReport, loading }) => ({ report: campaignReport, loading }))(CampaignReport)
+export default connect(({ campaignReport, loading, app }) => ({ report: campaignReport, loading, isAdmin: app.isAdmin }))(CampaignReport)

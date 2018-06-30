@@ -5,7 +5,7 @@ import { routerRedux } from 'dva/router'
 import { parse } from 'qs'
 import config from 'config'
 import { EnumRoleType } from 'enums'
-import { query, logout } from 'services/app'
+import { query, logout, getDefaultEntrance } from 'services/app'
 import * as menusService from 'services/menus'
 import queryString from 'query-string'
 
@@ -14,6 +14,7 @@ const { prefix } = config
 export default {
     namespace: 'app',
     state: {
+        isAdmin: false,
         user: {},
         permissions: {
             visit: [],
@@ -102,15 +103,20 @@ export default {
                         user,
                         permissions,
                         menu,
+                        isAdmin: permissions.role === EnumRoleType.ADMIN,
                     },
                 })
+
+                // Specify different entrance for different roles
+                let defaultEntrance = getDefaultEntrance(user)
+
                 if (location.pathname === '/login') {
                     yield put(routerRedux.push({
-                        pathname: '/campaign',
+                        pathname: defaultEntrance,
                     }))
                 } else if (location.pathname === '/') {
                     yield put(routerRedux.push({
-                        pathname: '/campaign',
+                        pathname: defaultEntrance,
                     }))
                 }
             } else if (config.openPages && config.openPages.indexOf(locationPathname) < 0) {
