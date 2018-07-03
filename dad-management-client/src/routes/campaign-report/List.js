@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 import { Table } from 'antd'
 import classnames from 'classnames'
 import queryString from 'query-string'
+import moment from 'moment/moment'
 import AnimTableBody from 'components/DataTable/AnimTableBody'
 import styles from './List.less'
 import { toString as platformToString } from '../../constants/PLATFORM'
-import moment from 'moment/moment'
 
 /* eslint-disable camelcase */
 
@@ -19,8 +19,8 @@ const List = ({ isMotion, location, ...tableProps }) => {
             key: 'date',
             dataIndex: 'date',
             render: (date) => {
-                const format = 'YYYY-MM-DD HH:mm'
-                return `${moment.utc(date.start_time).format(format)}`
+                const format = 'YYYY-MM-DD'
+                return `${moment.utc(date).format(format)}`
             },
         },
         {

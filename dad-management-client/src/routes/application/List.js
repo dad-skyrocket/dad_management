@@ -52,10 +52,10 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
         title: 'Name',
         key: 'app_name',
         render: (text, { app_id, app_name }) => <Link to={`application/${app_id}/slots`}>{app_name}</Link>,
-    }, {
-        title: 'App Id',
-        dataIndex: 'app_id',
-        key: 'app_id',
+    // }, {
+    //     title: 'App Id',
+    //     dataIndex: 'app_id',
+    //     key: 'app_id',
     }, {
         title: platform === PLATFORM.MOBILE_APP ? 'Package Name' : 'Url Name',
         key: 'urlOrPackageName',

@@ -6,14 +6,15 @@ const { user, userLogout, userLogin } = api
 // Specify different entrance for different roles
 export const getDefaultEntrance = (loginUser) => {
     let defaultEntrance = '/login'
-    if (loginUser.role === 'admin') {
+    const { permissions } = loginUser || {}
+    if (permissions.role === 'admin') {
         defaultEntrance = '/campaign'
     } else if (loginUser.isAdvertiser) {
         defaultEntrance = '/campaign'
     } else if (loginUser.isPublisher) {
         defaultEntrance = '/application'
     } else {
-        return null
+        return ''
     }
 
     return defaultEntrance

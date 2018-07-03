@@ -7,10 +7,11 @@
 import modelExtend from 'dva-model-extend'
 import moment from 'moment'
 import { message } from 'antd'
-import { queryList as queryOfferList, query, create, remove, update, duplicate, changeStatus } from 'services/campaign'
+import { queryList as queryCampaignList, query, create, remove, update, duplicate, changeStatus } from 'services/campaign'
 import { queryAll as querySlotAll } from 'services/slot'
 import { queryAll as queryAdvAll } from 'services/advertiser'
 import { pageModel } from './common'
+import eventEmitter from '../utils/eventEmitter'
 
 const formatPrice = (priceInCent) => {
     priceInCent = parseInt(priceInCent, 10)
@@ -29,18 +30,20 @@ const transformData = item => ({
     },
 })
 
+const initialState =  {
+    currentItem: {},
+    modalVisible: false,
+    modalType: 'create',
+    selectedRowKeys: [],
+    slotList: [],
+    filter: {},
+    advList: [], // for admin
+}
+
 export default modelExtend(pageModel, {
     namespace: 'campaign',
 
-    state: {
-        currentItem: {},
-        modalVisible: false,
-        modalType: 'create',
-        selectedRowKeys: [],
-        slotList: [],
-        filter: {},
-        advList: [], // for admin
-    },
+    state: initialState,
 
     subscriptions: {
         setup ({ dispatch, history }) {
@@ -51,7 +54,15 @@ export default modelExtend(pageModel, {
                         type: 'query',
                         payload,
                     })
+                } else if (location.pathname === '/login') {
+
                 }
+            })
+
+            eventEmitter.on('logout', () => {
+                dispatch({
+                    type: 'reset',
+                })
             })
         },
     },
@@ -83,7 +94,7 @@ export default modelExtend(pageModel, {
                 type: 'setFilter',
                 payload: _payload,
             })
-            const data = yield call(queryOfferList, _payload)
+            const data = yield call(queryCampaignList, _payload)
             if (data) {
                 yield put({
                     type: 'querySuccess',
@@ -222,6 +233,13 @@ export default modelExtend(pageModel, {
 
         hideModal (state) {
             return { ...state, modalVisible: false }
+        },
+
+        reset (state) {
+            return {
+                ...state,
+                ...initialState,
+            }
         },
 
     },

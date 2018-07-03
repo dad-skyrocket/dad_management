@@ -8,6 +8,7 @@ import { EnumRoleType } from 'enums'
 import { query, logout, getDefaultEntrance } from 'services/app'
 import * as menusService from 'services/menus'
 import queryString from 'query-string'
+import eventEmitter from '../utils/eventEmitter'
 
 const { prefix } = config
 
@@ -64,12 +65,12 @@ export default {
     },
     effects: {
 
-        * redirectToLogin (action, { put, select }) {
+        * redirectToLogin ({ payload = {} }, { put, select }) {
             const { locationPathname } = yield select(_ => _.app)
             yield put(routerRedux.push({
                 pathname: '/login',
                 search: queryString.stringify({
-                    from: locationPathname,
+                    from: payload.from || locationPathname,
                 }),
             }))
         },
@@ -127,7 +128,8 @@ export default {
         * logout ({ payload }, { call, put }) {
             const data = yield call(logout, parse(payload))
             if (data.success) {
-                yield put({ type: 'redirectToLogin' })
+                eventEmitter.emit('logout')
+                yield put({ type: 'redirectToLogin', payload: { from: '/' } })
             } else {
                 throw (data)
             }

@@ -5,6 +5,7 @@ import {
     DatePicker, TimePicker, Icon, Button,
     Transfer, Alert, message, Checkbox, Tabs,
 } from 'antd'
+import _uniqBy from 'lodash/uniqBy'
 
 import probe from 'probe-image-size'
 import { Upload } from 'components'
@@ -485,12 +486,13 @@ class SlotSelector extends React.Component {
         value: PropTypes.array,
         onChange: PropTypes.func,
         slotList: PropTypes.array,
+        selectedSlotList: PropTypes.array,
     }
 
     constructor (props) {
         super(props)
 
-        this.resetSlotList(props.slotList)
+        this.resetSlotList(_uniqBy([...props.slotList, ...props.selectedSlotList], slot => slot.slot_id))
 
         this.state = {
             activeKey: PLATFORM.PC_WEB,
@@ -498,12 +500,13 @@ class SlotSelector extends React.Component {
     }
 
     componentWillReceiveProps (nextProps) {
-        if (nextProps.slotList !== this.props.slotList) {
-            this.resetSlotList(nextProps.slotList)
+        if (nextProps.slotList !== this.props.slotList || nextProps.selectedSlotList !== this.props.selectedSlotList) {
+            this.resetSlotList(_uniqBy([...nextProps.slotList, ...nextProps.selectedSlotList], slot => slot.slot_id))
         }
     }
 
     resetSlotList = (slotList = []) => {
+        console.log(slotList)
         this.platformSlots = {
             [PLATFORM.PC_WEB]: slotList.filter(slot => slot.platform === PLATFORM.PC_WEB),
             [PLATFORM.WAP_WEB]: slotList.filter(slot => slot.platform === PLATFORM.WAP_WEB),
@@ -555,7 +558,7 @@ class SlotSelector extends React.Component {
     renderTabPane = (platform) => {
         const { value } = this.props
 
-        // console.log(value, this.platformSlots[platform])
+        console.log(value, this.platformSlots[platform])
 
         const tabValue = (value || []).filter((slotId) => {
             return this.platformSlotsMap[platform][slotId]
@@ -568,7 +571,7 @@ class SlotSelector extends React.Component {
                 <TransferWrapper
                     dataSource={this.platformSlots[platform].map(slot => ({
                         key: slot.slot_id,
-                        title: slot.slot_name,
+                        title: `${slot.app_name}_${slot.slot_name}`,
                     }))}
                     titles={['Available Slots', 'Selected Slots']}
                     render={_item => _item.title}
@@ -839,6 +842,7 @@ const modal = ({
                     })(
                         <SlotSelector
                             slotList={slotList}
+                            selectedSlotList={item.slots}
                         />
                     )}
                 </FormItem>

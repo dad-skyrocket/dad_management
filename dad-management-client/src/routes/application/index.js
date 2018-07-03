@@ -136,7 +136,7 @@ const Application = ({ isAdmin, application, dispatch, loading, location }) => {
                 <TabPane tab="PC Web" key={PLATFORM.PC_WEB}>
                     <List {...listProps} />
                 </TabPane>
-                <TabPane tab="Wap Web" key={PLATFORM.WAP_WEB}>
+                <TabPane tab="Mobile Wap" key={PLATFORM.WAP_WEB}>
                     <List {...listProps} />
                 </TabPane>
                 <TabPane tab="Mobile App" key={PLATFORM.MOBILE_APP}>

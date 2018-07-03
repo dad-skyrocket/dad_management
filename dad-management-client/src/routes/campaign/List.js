@@ -118,7 +118,7 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
                 const platformMap = {}
                 slotIds.forEach((slotId) => {
                     const slot = slotMap[slotId]
-                    if (!platformMap[slot.platform]) {
+                    if (slot && !platformMap[slot.platform]) {
                         platformMap[slot.platform] = true
                     }
                 })
