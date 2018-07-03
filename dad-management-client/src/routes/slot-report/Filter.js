@@ -43,7 +43,7 @@ function s2ab (s/* :string */)/* :ArrayBuffer */ {
 
 const Filter = ({
     isAdmin,
-    advList,
+    pubList,
     onFilterChange,
     filter,
     form: {
@@ -82,7 +82,7 @@ const Filter = ({
         fields.date_range = [moment(), moment()]
         fields.timezone = '8'
         fields.platform = 'all'
-        fields.adv_id = 'all'
+        fields.pub_id = 'all'
         setFieldsValue(fields)
         handleSubmit()
     }
@@ -112,11 +112,11 @@ const Filter = ({
         /* convert state to workbook */
         const ws = XLSX.utils.aoa_to_sheet(data)
         const wb = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(wb, ws, 'campaign_report')
+        XLSX.utils.book_append_sheet(wb, ws, 'slot_report')
         /* generate XLSX file */
         const wbout = XLSX.write(wb, { type: 'binary', bookType: 'xlsx' })
         /* send to client */
-        FileSaver.saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'campaign_report.xlsx') // eslint-disable-line
+        FileSaver.saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'slot_report.xlsx') // eslint-disable-line
     }
 
     const handleExport = async () => {
@@ -126,24 +126,26 @@ const Filter = ({
         request({
             method: 'get',
             data: fields,
-            url: config.api.campaignReport,
+            url: config.api.applicationReport,
         }).then((res) => {
             const data = [[
                 'Date',
-                'Campaign Id',
-                'Campaign Name',
+                'Slot Id',
+                'Slot Name',
                 'Platform',
                 'Impression',
                 'Clicks',
                 'CTR',
+                'Revenue',
             ]].concat((res.data || []).map(record => transformData(record)).map(record => ([
                 record.date,
-                record.camp_id,
-                record.camp_name,
+                record.slot_id,
+                record.slot_name,
                 platformToString(record.platform) || 'Unknown platform',
                 record.impression,
                 record.clicks,
                 `${record.ctr} %`,
+                record.revenue,
             ])))
             exportFile(data)
         })
@@ -154,12 +156,12 @@ const Filter = ({
         return current && current.valueOf() < (Date.now() - 3600000 * 24 * 31 * 3) // eslint-disable-line
     }
 
-    const { camp_id, camp_name, platform, date_range, timezone, adv_id } = filter
+    const { slot_id, slot_name, platform, date_range, timezone, pub_id } = filter
 
     return (
         <Row gutter={24}>
             <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-                {getFieldDecorator('camp_id', { initialValue: camp_id })(<Search placeholder="Search by campaign id"
+                {getFieldDecorator('slot_id', { initialValue: slot_id })(<Search placeholder="Search by slot id"
                     size="large"
                     onSearch={handleSubmit}
                 />)}
@@ -198,8 +200,8 @@ const Filter = ({
                             onChange={handleChangeDateRange.bind(null, 'date_range')}
                             disabledDate={disabledDate}
                             ranges={{
-                                'Today': [moment().startOf('day'), moment().endOf('day')],
-                                'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                                Today: [moment().startOf('day'), moment().endOf('day')],
+                                Yesterday: [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
                                 'Recent last 7 days': [moment().subtract(6, 'days').startOf('day'), moment().endOf('day')],
                             }}
                         />,
@@ -224,12 +226,12 @@ const Filter = ({
             {
                 isAdmin ?
                     <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }} sm={{ span: 12 }}>
-                        <FilterItem label="Advertisers">
-                            {getFieldDecorator('adv_id', { initialValue: adv_id || 'all' })(
-                                <Select style={{ width: '100%' }} size="large" onChange={handleChangeSelect.bind(null, 'adv_id')}>
+                        <FilterItem label="Publishers">
+                            {getFieldDecorator('pub_id', { initialValue: pub_id || 'all' })(
+                                <Select style={{ width: '100%' }} size="large" onChange={handleChangeSelect.bind(null, 'pub_id')}>
                                     <Option value="all">All</Option>
                                     {
-                                        (advList || []).map(adv => <Option key={adv.adv_id} value={`${adv.adv_id}`}>{adv.adv_name}</Option>)
+                                        (pubList || []).map(pub => <Option key={pub.pub_id} value={`${pub.pub_id}`}>{pub.pub_name}</Option>)
                                     }
                                 </Select>
                             )}
@@ -257,7 +259,7 @@ const Filter = ({
 
 Filter.propTypes = {
     isAdmin: PropTypes.bool,
-    advList: PropTypes.array,
+    pubList: PropTypes.array,
     onAdd: PropTypes.func,
     form: PropTypes.object,
     filter: PropTypes.object,

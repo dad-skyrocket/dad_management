@@ -7,14 +7,14 @@ import queryString from 'query-string'
 import List from './List'
 import Filter from './Filter'
 
-const CampaignReport = ({ location, dispatch, report, loading, isAdmin }) => {
+const SlotReport = ({ location, dispatch, report, loading, isAdmin }) => {
     location.query = queryString.parse(location.search)
-    const { list, pagination, advList } = report
+    const { list, pagination, pubList } = report
     const { pageSize } = pagination
 
     const listProps = {
         dataSource: list,
-        loading: loading.effects['campaign-report/query'],
+        loading: loading.effects['slot-report/query'],
         pagination,
         location,
         onChange (page) {
@@ -32,7 +32,7 @@ const CampaignReport = ({ location, dispatch, report, loading, isAdmin }) => {
 
     const filterProps = {
         isAdmin,
-        advList,
+        pubList,
         filter: {
             ...location.query,
         },
@@ -56,7 +56,7 @@ const CampaignReport = ({ location, dispatch, report, loading, isAdmin }) => {
     )
 }
 
-CampaignReport.propTypes = {
+SlotReport.propTypes = {
     isAdmin: PropTypes.bool,
     report: PropTypes.object,
     location: PropTypes.object,
@@ -64,4 +64,4 @@ CampaignReport.propTypes = {
     loading: PropTypes.object,
 }
 
-export default connect(({ campaignReport, loading, app }) => ({ report: campaignReport, loading, isAdmin: app.isAdmin }))(CampaignReport)
+export default connect(({ slotReport, loading, app }) => ({ report: slotReport, loading, isAdmin: app.isAdmin }))(SlotReport)
