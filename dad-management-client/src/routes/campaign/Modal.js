@@ -492,7 +492,7 @@ class SlotSelector extends React.Component {
     constructor (props) {
         super(props)
 
-        this.resetSlotList(_uniqBy([...props.slotList, ...props.selectedSlotList], slot => slot.slot_id))
+        this.resetSlotList(_uniqBy([...(props.slotList || []), ...(props.selectedSlotList || [])] || [], slot => slot.slot_id))
 
         this.state = {
             activeKey: PLATFORM.PC_WEB,
@@ -501,7 +501,7 @@ class SlotSelector extends React.Component {
 
     componentWillReceiveProps (nextProps) {
         if (nextProps.slotList !== this.props.slotList || nextProps.selectedSlotList !== this.props.selectedSlotList) {
-            this.resetSlotList(_uniqBy([...nextProps.slotList, ...nextProps.selectedSlotList], slot => slot.slot_id))
+            this.resetSlotList(_uniqBy([...(nextProps.slotList || []), ...(nextProps.selectedSlotList || [])], slot => slot.slot_id))
         }
     }
 
