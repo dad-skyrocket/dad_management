@@ -47,6 +47,7 @@ const Application = ({ isAdmin, application, dispatch, loading, location }) => {
     }
 
     const listProps = {
+        isAdmin,
         platform,
         pagination,
         dataSource: list,

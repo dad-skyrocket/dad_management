@@ -13,7 +13,7 @@ import { toString as slotTypeToString } from '../../../constants/SLOT_TYPE'
 
 const confirm = Modal.confirm
 
-const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
+const List = ({ isAdmin, onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
     const handleMenuClick = (record, e) => {
         switch (e.key) {
             case '1':
@@ -62,7 +62,11 @@ const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
         }
     }
 
-    const columns = [{
+    const columns = [...(isAdmin ? [{
+        title: 'Creator',
+        key: 'creator',
+        dataIndex: 'create_user_name',
+    }] : []), {
     //     title: 'Slot Id',
     //     dataIndex: 'slot_id',
     //     key: 'slot_id',
@@ -156,6 +160,7 @@ const List = ({ onDeleteItem, onEditItem, onChangeStatus, ...tableProps }) => {
 }
 
 List.propTypes = {
+    isAdmin: PropTypes.bool,
     onDeleteItem: PropTypes.func,
     onEditItem: PropTypes.func,
     onChangeStatus: PropTypes.func,

@@ -8,7 +8,7 @@ import PLATFORM from '../../constants/PLATFORM'
 
 const confirm = Modal.confirm
 
-const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
+const List = ({ isAdmin, platform, onEditItem, onChangeStatus, ...tableProps }) => {
     const handleMenuClick = (record, e) => {
         switch (e.key) {
             case '1':
@@ -48,7 +48,11 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
         }
     }
 
-    const columns = [{
+    const columns = [...(isAdmin ? [{
+        title: 'Creator',
+        key: 'creator',
+        dataIndex: 'create_user_name',
+    }] : []), {
         title: 'Name',
         key: 'app_name',
         render: (text, { app_id, app_name }) => <Link to={`application/${app_id}/slots`}>{app_name}</Link>,
@@ -149,6 +153,7 @@ const List = ({ platform, onEditItem, onChangeStatus, ...tableProps }) => {
 }
 
 List.propTypes = {
+    isAdmin: PropTypes.bool,
     platform: PropTypes.string,
     onEditItem: PropTypes.func,
     onChangeStatus: PropTypes.func,

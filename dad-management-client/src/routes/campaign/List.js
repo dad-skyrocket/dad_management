@@ -11,7 +11,7 @@ import { toString as platformToString } from '../../constants/PLATFORM'
 
 const confirm = Modal.confirm
 
-const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMotion, location, slotList = [], ...tableProps }) => {
+const List = ({ isAdmin, onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMotion, location, slotList = [], ...tableProps }) => {
     location.query = queryString.parse(location.search)
 
     const handleMenuClick = (record, e) => {
@@ -88,6 +88,11 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
     })
 
     const columns = [
+        ...(isAdmin ? [{
+            title: 'Creator',
+            key: 'creator',
+            dataIndex: 'create_user_name',
+        }] : []),
         {
             title: 'Campaign Name',
             dataIndex: 'camp_name',
@@ -230,6 +235,7 @@ const List = ({ onDuplicateItem, onDeleteItem, onEditItem, onChangeStatus, isMot
 }
 
 List.propTypes = {
+    isAdmin: PropTypes.bool,
     onDuplicateItem: PropTypes.func,
     onDeleteItem: PropTypes.func,
     onEditItem: PropTypes.func,

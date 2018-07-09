@@ -14,7 +14,7 @@ import Filter from './Filter'
 import Modal from './Modal'
 import List from './List'
 
-const ApplicationSlots = ({ applicationSlots, dispatch, loading, location }) => {
+const ApplicationSlots = ({ isAdmin, applicationSlots, dispatch, loading, location }) => {
     const { application, list, pagination, currentItem, modalVisible, modalType, platform } = applicationSlots
     const { query = {}, pathname } = location
 
@@ -44,6 +44,7 @@ const ApplicationSlots = ({ applicationSlots, dispatch, loading, location }) => 
     }
 
     const listProps = {
+        isAdmin,
         pagination,
         dataSource: list,
         loading: loading.effects['applicationSlots/query'],
@@ -102,10 +103,11 @@ const ApplicationSlots = ({ applicationSlots, dispatch, loading, location }) => 
 }
 
 ApplicationSlots.propTypes = {
+    isAdmin: PropTypes.bool,
     applicationSlots: PropTypes.object,
     loading: PropTypes.object,
     location: PropTypes.object,
     dispatch: PropTypes.func,
 }
 
-export default connect(({ applicationSlots, loading }) => ({ applicationSlots, loading }))(ApplicationSlots)
+export default connect(({ applicationSlots, loading, app }) => ({ applicationSlots, loading, isAdmin: app.isAdmin }))(ApplicationSlots)

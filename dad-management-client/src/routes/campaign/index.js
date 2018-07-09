@@ -39,6 +39,7 @@ const Campaign = ({ location, dispatch, campaign, loading, isAdmin }) => {
     }
 
     const listProps = {
+        isAdmin,
         dataSource: list,
         slotList,
         loading: loading.effects['campaign/query'],
