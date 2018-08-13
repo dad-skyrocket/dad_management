@@ -6,9 +6,13 @@ files:
 hooks:
   AfterInstall:
     - location: codedeploy/after_install.sh
-      timeout: 300
+      timeout: 250
       runas: root
   ApplicationStart:
     - location: codedeploy/application_start.sh
-      timeout: 300
+      timeout: 250
+      runas: root
+  ValidateService:
+    - location: codedeploy/validate_service.sh
+      timeout: 250
       runas: root
